@@ -39,6 +39,7 @@ class Equipment(Item):
         self.criticalHit: int = 0
         self.directHitRate: int = 0
         self.tenacity: int = 0
+        self.piety: int = 0
         
         self.companyCrest: bool = False
         self.armorie: bool = False

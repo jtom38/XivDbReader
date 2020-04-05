@@ -205,10 +205,15 @@ class ParseItems():
                         requiredItemsDict['item'] = itemName
 
                         rx = re.findall(r'\d', requiredItemsDict['item'])
-                        itemAmount: int = rx[len(rx) - 1]
-                        requiredItemsDict['itemAmount'] = itemAmount
+                        if rx.__len__() == 1:
+                            itemAmount: int = rx[len(rx) - 1]
+                        elif rx.__len__() == 2:
+                            itemAmount: str = f"{rx[0]}{rx[1]}"
+                        elif rx.__len__() == 3:
+                            itemAmount: str == f"{rx[0]}{rx[1]}{rx[2]}"
+                        requiredItemsDict['itemAmount'] = int(itemAmount)
 
-                        requiredItemsDict['item'] = itemName.replace(itemAmount, '')
+                        requiredItemsDict['item'] = itemName.replace(itemAmount, '').replace(" ", '')
 
                         requiredItemsDict['npc'] = ri.contents[1].text
                         requiredItemsDict['location'] = ri.contents[2].text
@@ -423,6 +428,8 @@ class ParseItems():
                     self.item.directHitRate = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Tenacity":
                     self.item.tenacity = self.__cleanBonusAttr__(b.contents[1])
+                elif b.contents[0].text == "Piety":
+                    self.item.piety = self.__cleanBonusAttr__(b.contents[1])
         except Exception as e:
             raise UnableToFindValue("Failed to find BonusAttr, something is missing that is expected.",e)
 
