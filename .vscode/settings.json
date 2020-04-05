@@ -1,0 +1,9 @@
+{
+    "python.pythonPath": "/Users/jamestombleson/.local/share/virtualenvs/ffxiv-Rud_--Yd/bin/python",
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true
+}
