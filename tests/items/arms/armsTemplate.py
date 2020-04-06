@@ -151,26 +151,38 @@ def test_dropsFrom(parseItemData):
 def test_dropsFromLevel(parseItemData):
     if pytest.item.relatedDuties[0]['requiredLevel'] == 71:
         assert True
+    else:
+        assert False
     
 def test_dropsFromRequiredItemLevel(parseItemData):
     if pytest.item.relatedDuties[0]['averageItemLevel'] == 370:
         assert True
+    else:
+        assert False
 
 def test_RequiredItemName(parseItemData):
     if "Hades Totem" in pytest.item.requiredItems[0]['item']:
         assert True
+    else: 
+        assert False
 
 def test_RequiredItemCount(parseItemData):
     if pytest.item.requiredItems[0]['itemAmount'] == 7:
         assert True 
+    else:
+        assert False
 
 def test_RequiredItemNpc(parseItemData):
     if "Fathard" in pytest.item.requiredItems[0]['npc']:
         assert True 
+    else:
+        assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
-    if "Eulmore" in pytest.item.requiredItems[0]['location']:
+    if pytest.item.requiredItems.__len__() == 0:
         assert True 
+    else:
+        assert False
 
 def test_isUniqueUntradable(parseItemData):
     if pytest.item.untradable == True and \

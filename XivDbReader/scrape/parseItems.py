@@ -386,8 +386,8 @@ class ParseItems():
                             duty: Dict = {'name': '', 'requiredLevel': 0, 'averageItemLevel': 0}
                             duties = a.contents[3].contents[1].contents[3]
                             duty['name'] = duties.contents[1].contents[1].contents[3].contents[0]
-                            duty['requiredLevel'] = duties.contents[1].contents[3].text
-                            duty['averageItemLevel'] = duties.contents[1].contents[5].string
+                            duty['requiredLevel'] = int(duties.contents[1].contents[3].text)
+                            duty['averageItemLevel'] = int(duties.contents[1].contents[5].string)
                             dutiesList.append(duty)
 
                             self.item.relatedDuties = dutiesList

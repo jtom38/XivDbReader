@@ -126,42 +126,64 @@ def test_buyFor(parseItemData):
 def test_vendors(parseItemData):
     if len(pytest.item.buyFrom) == 0:
         assert True
+    else:
+        assert False
 
 def test_vendorsNames(parseItemData):
     if pytest.item.buyFrom.__len__() == 0:
         assert True
+    else:     
+        assert False
 
 def test_vendorLocations(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
+    if len(pytest.item.buyFrom) == 0:
         assert True
+    else:
+        assert False
 
 def test_dropsFrom(parseItemData):
-    if pytest.item.relatedDuties.__len__() == 0:
+    if pytest.item.relatedDuties[0]['name'] == 'Cinder Drift (Extreme)':
         assert True
+    else:
+        assert False
 
 def test_dropsFromLevel(parseItemData):
-    if pytest.item.relatedDuties.__len__() == 0:
+    if pytest.item.relatedDuties[0]['requiredLevel'] == 80:
         assert True
+    else:
+        assert False
     
 def test_dropsFromRequiredItemLevel(parseItemData):
-    if pytest.item.relatedDuties.__len__() == 0:
+    if pytest.item.relatedDuties[0]['averageItemLevel'] == 470:
         assert True
+    else:
+        assert False
 
 def test_RequiredItemName(parseItemData):
-    if len(pytest.item.requiredItems) == 0:
+    res = pytest.item.requiredItems
+    _len = len(res)
+    if _len == 1:
         assert True
+    else:    
+        assert False
 
 def test_RequiredItemCount(parseItemData):
-    if pytest.item.requiredItems.__len__() == 0:
+    if pytest.item.requiredItems[0]['itemAmount'] == 10:
         assert True 
+    else:
+        assert False
 
 def test_RequiredItemNpc(parseItemData):
-    if pytest.item.requiredItems.__len__() == 0:
+    if pytest.item.requiredItems[0]['npc'] == "C'intana":
         assert True 
+    else:
+        assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
-    if pytest.item.requiredItems.__len__() == 0:
+    if pytest.item.requiredItems[0]['location'] == 'Mor Dhona (X:22.7 Y:6.6)':
         assert True 
+    else:
+        assert False
 
 def test_isUniqueUntradable(parseItemData):
     if pytest.item.untradable == True and \
