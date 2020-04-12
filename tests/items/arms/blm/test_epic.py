@@ -57,23 +57,24 @@ def test_itemJobs(parseItemData):
         assert True
 
 def test_attributes(parseItemData):
-    res = pytest.e_item
-    if res.vitality == 410 and res.intelligence == 403:
+    res = pytest.e_item.stats
+    if res.vitality == 410 and \
+        res.intelligence == 403:
         assert True
 
 def test_materiaSlots(parseItemData):
-    res = pytest.e_item
-    if res.materiaSlots == 0:
+    res = pytest.e_item.materia
+    if res.slots == 0:
         assert True
 
 def test_repairClass(parseItemData):
     res = pytest.e_item
-    if res.repairClass == "Carpenter":
+    if res.repair.job == "Carpenter":
         assert True
 
 def test_repairClassLevel(parseItemData):
     item = pytest.e_item
-    if item.repairClassLevel == 60:
+    if item.repair.level == 60:
         assert True
 
 def test_sellsFor(parseItemData):

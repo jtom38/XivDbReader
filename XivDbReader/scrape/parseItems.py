@@ -1,5 +1,5 @@
 
-from XivDbReader.collections import Item, Weapon, Armor
+from XivDbReader.collections import Item, Weapon, Armor, RepairInfo, Materia, Stats
 from XivDbReader.exceptions import UnableToFindValue
 
 from typing import Dict, List
@@ -101,9 +101,17 @@ class ParseItems():
         except Exception as e:
             pass
 
-        if slot == "Shield" or slot == "Head" or slot == "Body" or slot == 'Hands' or slot == "Waist" or slot == "Legs" or slot == "Feet":
+        if slot == "Shield" or \
+            slot == "Head" or \
+            slot == "Body" or \
+            slot == 'Hands' or \
+            slot == "Waist" or \
+            slot == "Legs" or \
+            slot == "Feet":
+
             self.item = Armor()
-        elif "Arm" in slot:
+        elif "Arm" in slot or \
+            "Grimoire" in slot:
             self.item = Weapon()
 
         self.item.name = name
@@ -123,6 +131,9 @@ class ParseItems():
             try:
                 for p in pictureUrl[0].contents:
                     if p == '\n':
+                        continue
+
+                    if p.attrs['class'][0] == "staining":
                         continue
 
                     elif p.attrs['class'][0] == 'db-view__item__icon__cover':
@@ -158,12 +169,12 @@ class ParseItems():
                 or "Legs" in slot
                 or "Feet" in slot):
 
-                if len(i.contents) == 5:
-                    self.item.defense = i.contents[1].text
-                    self.item.magicDefense = i.contents[3].text
+                if len(specValue[0].contents) == 5:
+                    self.item.defense = int(specValue[0].contents[1].text)
+                    self.item.magicDefense = int(specValue[0].contents[3].text)
 
             # Weapon Values
-            elif ("Arm" in slot or "Grimorie" in slot):
+            elif ("Arm" in slot or "Grimoire" in slot):
                 # Healer Weapons
                 if ("Conjurer" in slot 
                     or "Scholar" in slot 
@@ -179,7 +190,6 @@ class ParseItems():
 
                 self.item.autoAttack = float(specValue[0].contents[3].text)
                 self.item.delay = float(specValue[0].contents[5].text)
-
         except Exception as e:
             pass
 
@@ -198,29 +208,9 @@ class ParseItems():
                         continue
 
                     if ri.contents[0].attrs['class'][0] == 'db-shop__item':
-                        requiredItemsDict: Dict = {'item': '', 'itemAmount': 0 , 'npc': '', 'location': ''}
-                        # Item amount is always the last value in the array
-                        
-                        itemName = ri.contents[0].contents[1].text
-                        requiredItemsDict['item'] = itemName
-
-                        rx = re.findall(r'\d', requiredItemsDict['item'])
-                        if rx.__len__() == 1:
-                            itemAmount: int = rx[len(rx) - 1]
-                        elif rx.__len__() == 2:
-                            itemAmount: str = f"{rx[0]}{rx[1]}"
-                        elif rx.__len__() == 3:
-                            itemAmount: str == f"{rx[0]}{rx[1]}{rx[2]}"
-                        requiredItemsDict['itemAmount'] = int(itemAmount)
-
-                        requiredItemsDict['item'] = itemName.replace(itemAmount, '').replace(" ", '')
-
-                        requiredItemsDict['npc'] = ri.contents[1].text
-                        requiredItemsDict['location'] = ri.contents[2].text
-                        requiredItemsList.append(requiredItemsDict)
-
+                        requiredItemsList.append(self.getRequiredItems(ri))
+                    
                 self.item.requiredItems = requiredItemsList
-
         except:
             print("Unable to find 'div class='sys_nq_element'.  Could be expected result based on the item.")
             #raise UnableToFindValue("Unable to find 'div class='sys_nq_element'")
@@ -247,45 +237,47 @@ class ParseItems():
         try:
             #materia_ = soup.find_all('div', class_='db-popup__inner')
             materia_ = soup.find_all("ul", {'class': 'db-view__materia_socket'})
-            self.item.materiaSlots = 0
-            self.item.materiaMelderClass = ''
-            self.item.materiaMelderLevel = 0
+            self.item.materia = Materia()
+            self.item.materia.slots = 0
+            self.item.materia.melderJob = ''
+            self.item.materia.melderLevel = 0
             if materia_ != []:
                 self.__parseMateriaValues__(materia_)
             else:
-                self.item.materiaSlots = 0
-                self.item.materiaMelder = None
+                self.item.materia.slots = 0
+                self.item.materia.melderJob = None
                 print(f"{self.item.name} seems to not accept materia.")
         except:
             print(f'Unable to find expected HTML for materia')
 
         try:
             repair = soup.find_all('ul', class_='db-view__item_repair')
+            self.item.repair = RepairInfo()
             for r in repair[0].contents:
                 if r == '\n':
                     continue
 
                 if r.contents[0].text == "Repair Level":
                     _repair = r.contents[0].next_sibling.text.split(" Lv. ")                    
-                    self.item.repairClass = _repair[0]
-                    self.item.repairClassLevel = int(_repair[1])
+                    self.item.repair.job = _repair[0]
+                    self.item.repair.level = int(_repair[1])
                     continue
                 
                 if r.contents[0].string == "Materials":
-                    self.item.repairMaterial = r.contents[1].text
+                    self.item.repair.material = r.contents[1].text
                     continue
 
                 if r.contents[0].text == "Materia Melding":
                     _melder = r.contents[1].text.split(' Lv. ')
-                    self.item.materiaMelderClass = _melder[0]
-                    self.item.materiaMelderLevel = int(_melder[1])
+                    self.item.materia.melderJob = _melder[0]
+                    self.item.materia.melderLevel = int(_melder[1])
                     pass
 
             if "Lv." in repair[0].contents[1].contents[1].text:
                 repairBy = repair[0].contents[1].contents[1].contents[0].split(" Lv. ")
-                self.item.repairClass: str = repairBy[0]
-                self.item.repairClassLevel: int = int(repairBy[1])
-                self.item.repairMaterial: str = repair[0].contents[1].next_sibling.contents[1].contents[0]
+                self.item.repair.job: str = repairBy[0]
+                self.item.repair.level: int = int(repairBy[1])
+                self.item.repair.material: str = repair[0].contents[1].next_sibling.contents[1].contents[0]
         except Exception as e:
             print(f"Unable to find expected HTML for repair values")
 
@@ -304,11 +296,11 @@ class ParseItems():
             self.item.buyPrice = 0
             self.item.sellPrice = 0
             self.item.marketProhibited = False
-            self.item.advancedMelding = True
+            self.item.materia.advancedMelding = True
             # Check for Advanced Melding
             for i in footer[0].contents:
                 if i.text == 'Advanced Melding Forbidden':
-                    self.item.advancedMelding = False
+                    self.item.materia.advancedMelding = False
                     continue
 
                 elif 'Available for Purchase:' in i.text:
@@ -318,7 +310,7 @@ class ParseItems():
                 elif "Sale Price:" in i.text:
                     textSplit = i.text.split("Sale Price: ")
                     gilSplit = textSplit[1].split(' gil')
-                    self.item.buyPrice = gilSplit[0]
+                    self.item.buyPrice = int(gilSplit[0].replace(',',''))
                     continue
 
                 elif 'Sells for' in i.text:
@@ -336,7 +328,13 @@ class ParseItems():
                     gil = gil.replace(',', '')
                     gil = gil.replace(' ', '')
 
-                    self.item.sellPrice = int(gil)
+
+                    if self.item.sellPrice != 0:
+                        #HQ Item
+                        #TODO HQ Sell Price
+                        pass
+                    else:
+                        self.item.sellPrice = int(gil)
                     continue
 
                 elif i.text == 'Market Prohibited':
@@ -403,33 +401,36 @@ class ParseItems():
 
     def __getBonusAttr__(self, htmlResult: Tag ):
         try:
+            # Set default values
+            self.item.stats = Stats()
+
             for b in htmlResult[1].contents[5].contents:
                 if b == '\n':
                     pass
                 elif b.contents[0].text == "Strength":
-                    self.item.strength = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.strength = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Vitality":
-                    self.item.vitality = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.vitality = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Mind":
-                    self.item.mind = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.mind = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Intelligence":
-                    self.item.intelligence = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.intelligence = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Determination":
-                    self.item.determination = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.determination = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Skill Speed":
-                    self.item.skillSpeed = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.skillSpeed = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Spell Speed":
-                    self.item.spellSpeed = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.spellSpeed = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Dexterity":
-                    self.item.dexterity = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.dexterity = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == 'Critical Hit':
-                    self.item.criticalHit = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.criticalHit = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Direct Hit Rate":
-                    self.item.directHitRate = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.directHitRate = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Tenacity":
-                    self.item.tenacity = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.tenacity = self.__cleanBonusAttr__(b.contents[1])
                 elif b.contents[0].text == "Piety":
-                    self.item.piety = self.__cleanBonusAttr__(b.contents[1])
+                    self.item.stats.piety = self.__cleanBonusAttr__(b.contents[1])
         except Exception as e:
             raise UnableToFindValue("Failed to find BonusAttr, something is missing that is expected.",e)
 
@@ -449,7 +450,7 @@ class ParseItems():
                     except:
                         mslots = 1
 
-            self.item.materiaSlots = mslots
+            self.item.materia.slots = mslots
         except Exception as e:
             raise UnableToFindValue("HTML contained code for MateriaSlots but failed to parse.", e)
 
@@ -461,7 +462,7 @@ class ParseItems():
             value = html.contents[1].contents[0]
             if key == 'Extractable: ':
                 if value == 'Yes':
-                    extractable == True
+                    extractable = True
                 
             return extractable
         except:
@@ -519,3 +520,37 @@ class ParseItems():
             ,f"key: {key}"
             ,f"value: {value}"
             ,f'raw: {e}')
+
+    def getRequiredItems(self, data: ResultSet) -> List:
+        try:
+            # store all the items and npc's here
+            requiredItemsList: List = []
+
+            # this is the core structure
+            requiredItemsDict: Dict = {'items': [], 'npc': '', 'location': ''}
+
+            items: List = []
+            for i in data.contents[0].contents[1]:
+                item: Dict = {'item': '', 'amount': 0}
+                thin = i.contents[0].next_sibling.contents[0].contents
+                item['item'] = thin[0].text
+                item['amount'] = int(thin[1].text)
+                items.append(item)
+
+            requiredItemsDict['items'] = items
+            # Item amount is always the last value in the array
+            #htmlItem = data.contents[0].contents[1].contents[0].contents[1]
+            #itemName = data.contents[0].contents[1].text
+            #requiredItemsDict['item'] = itemName
+
+            #requiredItemsDict['itemAmount'] = int(itemAmount)
+            #requiredItemsDict['itemAmount'] = int(htmlItem.contents[0].contents[1].text)
+            #requiredItemsDict['itemAmount'] = data.contents[1].previous_sibling.contents[1].contents[0].contents[0].next_sibling.contents[0].contents[0].next_sibling.text
+            #requiredItemsDict['item'] = itemName.replace(itemAmount, '').replace(" ", '')
+            #requiredItemsDict['item'] = data.contents[1].previous_sibling.contents[1].contents[0].contents[0].next_sibling.contents[0].contents[0].text
+            requiredItemsDict['npc'] = data.contents[1].text
+            requiredItemsDict['location'] = data.contents[2].text
+            return requiredItemsDict
+        except Exception as e:
+            print(e)
+            pass

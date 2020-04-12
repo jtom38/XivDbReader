@@ -1,11 +1,10 @@
-
 from XivDbReader.scrape import ParseItems
 from XivDbReader.collections import *
 import pytest
 
 pytest.html = ''
-pytest.url = 'https://na.finalfantasyxiv.com/lodestone/playguide/db/item/4d50452e229/'
-pytest.item: Weapon = Weapon()
+pytest.url = 'https://na.finalfantasyxiv.com/lodestone/playguide/db/item/b6dda0ded2e/'
+pytest.item: Equipment = Weapon()
 
 @pytest.fixture
 def getHtmlSource():
@@ -22,34 +21,37 @@ def parseItemData(getHtmlSource):
         pytest.item = pi.getDetails(html=pytest.html)
 
 def test_itemName(parseItemData):
-    if pytest.item.name == 'Ruby Codex':
+    if pytest.item.name == 'Jebat Eureka':
         assert True
     else: assert False
 
 def test_glamourOptions(parseItemData):
     if pytest.item.companyCrest == False and \
-        pytest.item.glamourChest == True and \
+        pytest.item.glamourChest == False and \
         pytest.item.armorie == False:
         assert True
     else: assert False
 
 def test_itemLevel(parseItemData):
-    if pytest.item.itemLevel == 485:
-        assert True
-    else: assert False
-
-def test_physicalDamage(parseItemData):
-    if pytest.item.physicalDamage == 0:
+    pi = ParseItems()
+    res = pi.getDetails(html=pytest.html)
+    if res.itemLevel == 405:
         assert True
     else: assert False
 
 def test_itemAttack(parseItemData):
-    if pytest.item.magicDamage == 167:
+    if pytest.item.physicalDamage == 0:
         assert True
     else: assert False
 
+def test_magicDamage(parseItemData):
+    if pytest.item.magicDamage == 147:
+        assert True
+    else: 
+        assert False
+
 def test_itemAutoAttack(parseItemData):
-    if pytest.item.autoAttack == 120.96:
+    if pytest.item.autoAttack == 5.33:
         assert True
     else: assert False
 
@@ -64,37 +66,34 @@ def test_itemJobs(parseItemData):
     else: assert False
 
 def test_jobLevel(parseItemData):
-    if pytest.item.level == 80:
+    if pytest.item.level == 70:
         assert True
     else: assert False
 
 def test_attributes(parseItemData):
-    if pytest.item.stats.piety == 477 and \
-        pytest.item.stats.criticalHit == 334 and \
-        pytest.item.stats.mind == 573 and \
-        pytest.item.stats.vitality == 561:
+    if pytest.item.stats.mind == 403 and \
+        pytest.item.stats.vitality == 410:
         assert True
     else: assert False
 
 ## Materia
 
 def test_materiaSlots(parseItemData):
-    if pytest.item.materia.slots == 2:
+    if pytest.item.materia.slots == 0:
         assert True
     else: assert False
 def test_materiaMelderClass(parseItemData):
-    if pytest.item.materia.melderJob == "Alchemist":
+    if pytest.item.materia.melderJob == "":
         assert True
-    else: assert False
 
 def test_materiaMelderLevel(parseItemData):
-    if pytest.item.materia.melderLevel == 80:
+    if pytest.item.materia.melderLevel == 00:
         assert True
     else: assert False
 
 def test_materiaAdvanced(parseItemData):
     if pytest.item.materia.advancedMelding == False:
-        assert True
+        assert True        
     else: assert False
 
 ## Repair
@@ -105,9 +104,10 @@ def test_repairClass(parseItemData):
     else: assert False
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repair.level == 70:
+    if pytest.item.repair.level == 60:
         assert True
     else: assert False
+
 def test_repairMaterial(parseItemData):
     if pytest.item.repair.material == 'Grade 7 Dark Matter':
         assert True
@@ -124,7 +124,7 @@ def test_projectable(parseItemData):
     else: assert False
 
 def test_dyeable(parseItemData):
-    if pytest.item.dyeable == False:
+    if pytest.item.dyeable == True:
         assert True
     else: assert False
 
@@ -132,6 +132,8 @@ def test_desynth(parseItemData):
     if pytest.item.desynth == 0.0:
         assert True
     else: assert False
+
+## Vendors
 
 def test_sellsFor(parseItemData):
     if pytest.item.sellPrice == 0:
@@ -146,67 +148,67 @@ def test_buyFor(parseItemData):
 def test_vendors(parseItemData):
     if len(pytest.item.buyFrom) == 0:
         assert True
-    else:
+    else: 
         assert False
 
 def test_vendorsNames(parseItemData):
     if pytest.item.buyFrom.__len__() == 0:
         assert True
-    else:     
+    else: 
         assert False
 
 def test_vendorLocations(parseItemData):
-    if len(pytest.item.buyFrom) == 0:
+    if pytest.item.buyFrom.__len__() == 0:
         assert True
     else:
         assert False
 
+## Instances/Fights
+
 def test_dropsFrom(parseItemData):
-    if pytest.item.relatedDuties[0]['name'] == 'Cinder Drift (Extreme)':
+    if pytest.item.relatedDuties.__len__() == 0:
         assert True
     else:
         assert False
 
 def test_dropsFromLevel(parseItemData):
-    if pytest.item.relatedDuties[0]['requiredLevel'] == 80:
+    if pytest.item.relatedDuties.__len__() == 0:
         assert True
     else:
         assert False
     
 def test_dropsFromRequiredItemLevel(parseItemData):
-    if pytest.item.relatedDuties[0]['averageItemLevel'] == 470:
+    if pytest.item.relatedDuties.__len__() == 0:
         assert True
     else:
         assert False
 
 def test_RequiredItemName(parseItemData):
-    res = pytest.item.requiredItems
-    if res[0]['items'][0]['item'] == 'Ruby Totem':
+    if pytest.item.requiredItems.__len__() == 0:
         assert True
-    else:    
+    else: 
         assert False
 
 def test_RequiredItemCount(parseItemData):
-    if pytest.item.requiredItems[0]['items'][0]['amount'] == 10:
+    if pytest.item.requiredItems.__len__() == 0:
         assert True 
     else:
         assert False
 
 def test_RequiredItemNpc(parseItemData):
-    if pytest.item.requiredItems[0]['npc'] == "C'intana":
+    if pytest.item.requiredItems.__len__() == 0:
         assert True 
     else:
         assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
-    if pytest.item.requiredItems[0]['location'] == 'Mor Dhona (X:22.7 Y:6.6)':
+    if pytest.item.requiredItems.__len__() == 0:
         assert True 
     else:
         assert False
 
 def test_isUniqueUntradable(parseItemData):
     if pytest.item.untradable == True and \
-        pytest.item.unique == False:
+        pytest.item.unique == True:
         assert True
     else: assert False
-    

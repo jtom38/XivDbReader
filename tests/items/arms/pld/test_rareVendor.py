@@ -1,10 +1,11 @@
+
 from XivDbReader.scrape import ParseItems
 from XivDbReader.collections import *
 import pytest
 
 pytest.html = ''
-pytest.url = 'https://na.finalfantasyxiv.com/lodestone/playguide/db/item/da663f852c1/'
-pytest.item: Weapon = Weapon()
+pytest.url = 'https://na.finalfantasyxiv.com/lodestone/playguide/db/item/c4e26dc27d0/'
+pytest.item: Equipment = Weapon()
 
 @pytest.fixture
 def getHtmlSource():
@@ -21,7 +22,7 @@ def parseItemData(getHtmlSource):
         pytest.item = pi.getDetails(html=pytest.html)
 
 def test_itemName(parseItemData):
-    if pytest.item.name == 'Lakeland Longsword ':
+    if pytest.item.name == 'Ironworks Magitek Sword':
         assert True
 
 def test_glamourOptions(parseItemData):
@@ -31,21 +32,19 @@ def test_glamourOptions(parseItemData):
         assert True
 
 def test_itemLevel(parseItemData):
-    pi = ParseItems()
-    res = pi.getDetails(html=pytest.html)
-    if res.itemLevel == 390:
+    if pytest.item.itemLevel == 120:
         assert True
 
 def test_itemAttack(parseItemData):
-    if pytest.item.physicalDamage == 107:
+    if pytest.item.physicalDamage == 54:
         assert True
 
 def test_itemAutoAttack(parseItemData):
-    if pytest.item.autoAttack == 79.89:
+    if pytest.item.autoAttack == 36.00:
         assert True
 
 def test_delay(parseItemData):
-    if pytest.item.delay == 2.24:
+    if pytest.item.delay == 2.00:
         assert True
 
 def test_itemJobs(parseItemData):
@@ -53,18 +52,18 @@ def test_itemJobs(parseItemData):
         assert True
 
 def test_jobLevel(parseItemData):
-    if pytest.item.level == 71:
+    if pytest.item.level == 50:
         assert True
 
 def test_attributes(parseItemData):
-    if pytest.item.stats.strength == 272 and \
-        pytest.item.stats.tenacity == 168 and \
-        pytest.item.stats.vitality == 304 and \
-        pytest.item.stats.criticalHit == 241:
+    if pytest.item.stats.strength == 34 and \
+        pytest.item.stats.directHitRate == 24 and \
+        pytest.item.stats.vitality == 40 and \
+        pytest.item.stats.determination == 24:
         assert True
 
 def test_materiaSlots(parseItemData):
-    if pytest.item.materia.slots == 2:
+    if pytest.item.materia.slots == 0:
         assert True
 
 def test_repairClass(parseItemData):
@@ -72,12 +71,14 @@ def test_repairClass(parseItemData):
         assert True
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repair.level == 61:
+    if pytest.item.repair.level == 40:
         assert True
 
 def test_repairMaterial(parseItemData):
-    if pytest.item.repair.material == 'Grade 7 Dark Matter':
+    if pytest.item.repair.material == 'Grade 5 Dark Matter':
         assert True
+
+##TODO materia melding
 
 def test_extractable(parseItemData):
     if pytest.item.extractable == True:
@@ -92,11 +93,11 @@ def test_dyeable(parseItemData):
         assert True
 
 def test_desynth(parseItemData):
-    if pytest.item.desynth == 390.0:
+    if pytest.item.desynth == 120.0:
         assert True
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 708:
+    if pytest.item.sellPrice == 756:
         assert True
 
 def test_buyFor(parseItemData):
@@ -107,43 +108,43 @@ def test_vendors(parseItemData):
     if len(pytest.item.buyFrom) == 0:
         assert True
 
-def test_vendorsNames(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
-        assert True
-
-def test_vendorLocations(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
-        assert True
-
 def test_dropsFrom(parseItemData):
-    if pytest.item.relatedDuties[0]['name'] == "Holminster Switch":
+    if pytest.item.relatedDuties.__len__() == 0:
         assert True
+    else: assert False
 
-def test_dropsFromLevel(parseItemData):
-    if pytest.item.relatedDuties[0]['requiredLevel'] == 71:
+def test_requiredItemTrades(parseItemData):
+    if pytest.item.requiredItems.__len__() == 4:
         assert True
-    
-def test_dropsFromRequiredItemLevel(parseItemData):
-    if pytest.item.relatedDuties[0]['averageItemLevel'] == 370:
-        assert True
+    else: assert False
 
 def test_RequiredItemName(parseItemData):
-    if pytest.item.requiredItems.__len__() == 0:
+    if pytest.item.requiredItems[0]['items'][0]['item'] == "Rowena's Token (Poetics)" and \
+        pytest.item.requiredItems[0]['items'][1]['item'] == "Encrypted Tomestone" and \
+        pytest.item.requiredItems[1]['items'][0]['item'] == "Silver Chocobo Feather" and \
+        pytest.item.requiredItems[2]['items'][0]['item'] == "Silver Chocobo Feather" and \
+        pytest.item.requiredItems[3]['items'][0]['item'] == "Silver Chocobo Feather":
         assert True
+    else: assert False
 
 def test_RequiredItemCount(parseItemData):
-    if pytest.item.requiredItems.__len__() == 0:
+    if pytest.item.requiredItems[0]['items'][0]['amount'] == 7 and \
+        pytest.item.requiredItems[0]['items'][1]['amount'] == 1 and \
+        pytest.item.requiredItems[1]['items'][0]['amount'] == 5 and \
+        pytest.item.requiredItems[1]['items'][0]['amount'] == 5 and \
+        pytest.item.requiredItems[1]['items'][0]['amount'] == 5:    
         assert True 
+    else: assert False
 
 def test_RequiredItemNpc(parseItemData):
-    if pytest.item.requiredItems.__len__() == 0:
-        assert True 
+    if "Aelina" in pytest.item.requiredItems[0]['npc'] and \
+        "Calamity Salvager" in pytest.item.requiredItems[1]['npc'] and \
+        "Calamity Salvager" in pytest.item.requiredItems[2]['npc'] and \
+        "Calamity Salvager" in pytest.item.requiredItems[3]['npc']:
+        assert True
+    else: assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
-    if pytest.item.requiredItems.__len__() == 0:
+    if "Eulmore" in pytest.item.requiredItems[0]['location']:
         assert True 
 
-def test_isUniqueUntradable(parseItemData):
-    if pytest.item.untradable == True and \
-        pytest.item.unique == True:
-        assert True

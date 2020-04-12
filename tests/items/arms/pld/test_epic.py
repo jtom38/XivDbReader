@@ -56,8 +56,8 @@ def test_jobLevel(parseItemData):
         assert True
 
 def test_attributes(parseItemData):
-    if pytest.item.strength == 288 and \
-        pytest.item.vitality == 325:
+    if pytest.item.stats.strength == 288 and \
+        pytest.item.stats.vitality == 325:
         assert True
 
 def test_materiaSlots(parseItemData):

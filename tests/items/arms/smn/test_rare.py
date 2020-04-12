@@ -52,7 +52,7 @@ def test_itemAutoAttack(parseItemData):
     if pytest.item.autoAttack == 120.96:
         assert True
     else: assert False
-
+    
 def test_delay(parseItemData):
     if pytest.item.delay == 3.12:
         assert True
@@ -108,6 +108,7 @@ def test_repairClassLevel(parseItemData):
     if pytest.item.repair.level == 70:
         assert True
     else: assert False
+
 def test_repairMaterial(parseItemData):
     if pytest.item.repair.material == 'Grade 7 Dark Matter':
         assert True
@@ -181,13 +182,14 @@ def test_dropsFromRequiredItemLevel(parseItemData):
 
 def test_RequiredItemName(parseItemData):
     res = pytest.item.requiredItems
-    if res[0]['items'][0]['item'] == 'Ruby Totem':
+    _len = len(res)
+    if _len == 1:
         assert True
     else:    
         assert False
 
 def test_RequiredItemCount(parseItemData):
-    if pytest.item.requiredItems[0]['items'][0]['amount'] == 10:
+    if pytest.item.requiredItems[0]['itemAmount'] == 10:
         assert True 
     else:
         assert False

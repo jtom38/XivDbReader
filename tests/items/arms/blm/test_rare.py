@@ -44,22 +44,22 @@ def test_itemJobs(parseItemData):
         assert True
 
 def test_attributes(parseItemData):
-    if pytest.item.vitality == 410 and \
-        pytest.item.intelligence == 403 and \
-        pytest.item.criticalHit == 249 and \
-        pytest.item.spellSpeed == 356:
+    if pytest.item.stats.vitality == 410 and \
+        pytest.item.stats.intelligence == 403 and \
+        pytest.item.stats.criticalHit == 249 and \
+        pytest.item.stats.spellSpeed == 356:
         assert True
 
 def test_materiaSlots(parseItemData):
-    if pytest.item.materiaSlots == 2:
+    if pytest.item.materia.slots == 2:
         assert True
 
 def test_repairClass(getHtmlSource):
-    if pytest.item.repairClass == "Goldsmith":
+    if pytest.item.repair.job == "Goldsmith":
         assert True
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repairClassLevel == 60:
+    if pytest.item.repair.level == 60:
         assert True
 
 def test_sellsFor(parseItemData):
@@ -67,7 +67,7 @@ def test_sellsFor(parseItemData):
         assert True
 
 def test_dropsFrom(parseItemData):
-    if pytest.item.RelatedDuties[0]['name'] == "The Minstrel's Ballad: Hades's Elegy":
+    if pytest.item.relatedDuties[0]['name'] == "The Minstrel's Ballad: Hades's Elegy":
         assert True
 
 def test_RequiredItemName(parseItemData):

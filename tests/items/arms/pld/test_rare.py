@@ -56,26 +56,26 @@ def test_jobLevel(parseItemData):
         assert True
 
 def test_attributes(parseItemData):
-    if pytest.item.strength == 369 and \
-        pytest.item.tenacity == 228 and \
-        pytest.item.vitality == 391 and \
-        pytest.item.determination == 325:
+    if pytest.item.stats.strength == 369 and \
+        pytest.item.stats.tenacity == 228 and \
+        pytest.item.stats.vitality == 391 and \
+        pytest.item.stats.determination == 325:
         assert True
 
 def test_materiaSlots(parseItemData):
-    if pytest.item.materiaSlots == 2:
+    if pytest.item.materia.slots == 2:
         assert True
 
 def test_repairClass(parseItemData):
-    if pytest.item.repairClass == "Blacksmith":
+    if pytest.item.repair.job == "Blacksmith":
         assert True
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repairClassLevel == 70:
+    if pytest.item.repair.level == 70:
         assert True
 
 def test_repairMaterial(parseItemData):
-    if pytest.item.repairMaterial == 'Grade 7 Dark Matter':
+    if pytest.item.repair.material == 'Grade 7 Dark Matter':
         assert True
 
 ##TODO materia melding

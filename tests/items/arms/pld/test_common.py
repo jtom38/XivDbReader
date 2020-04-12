@@ -57,25 +57,25 @@ def test_jobLevel(parseItemData):
         assert True
 
 def test_attributes(parseItemData):
-    if pytest.item.strength == 1 and \
-        pytest.item.tenacity == 1 and \
-        pytest.item.vitality == 1:
+    if pytest.item.stats.strength == 1 and \
+        pytest.item.stats.tenacity == 1 and \
+        pytest.item.stats.vitality == 1:
         assert True
 
 def test_materiaSlots(parseItemData):
-    if pytest.item.materiaSlots == 0:
+    if pytest.item.materia.slots == 0:
         assert True
 
 def test_repairClass(parseItemData):
-    if pytest.item.repairClass == "Carpenter":
+    if pytest.item.repair.job == "Carpenter":
         assert True
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repairClassLevel == 1:
+    if pytest.item.repair.level == 1:
         assert True
 
 def test_repairMaterial(parseItemData):
-    if pytest.item.repairMaterial == 'Grade 1 Dark Matter':
+    if pytest.item.repair.material == 'Grade 1 Dark Matter':
         assert True
 
 def test_extractable(parseItemData):

@@ -61,44 +61,43 @@ def test_jobLevel(parseItemData):
         assert True
 
 def test_attributes(parseItemData):
-    if pytest.item.intelligence == 370 and \
-        pytest.item.criticalHit == 350 and \
-        pytest.item.vitality == 370 and \
-        pytest.item.spellSpeed == 245:
+    if pytest.item.stats.intelligence == 370 and \
+        pytest.item.stats.criticalHit == 350 and \
+        pytest.item.stats.vitality == 370 and \
+        pytest.item.stats.spellSpeed == 245:
         assert True
 
 ## Materia
 
 def test_materiaSlots(parseItemData):
-    if pytest.item.materiaSlots == 2:
+    if pytest.item.materia.slots == 2:
         assert True
 
 def test_materiaMelderClass(parseItemData):
-    if pytest.item.materiaMelderClass == "Carpenter":
+    if pytest.item.materia.melderJob == "Carpenter":
         assert True
 
 def test_materiaMelderLevel(parseItemData):
-    if pytest.item.materiaMelderLevel == 78:
+    if pytest.item.materia.melderLevel == 78:
         assert True
 
 def test_materiaAdvanced(parseItemData):
-    if pytest.item.advancedMelding == True:
+    if pytest.item.materia.advancedMelding == True:
         assert True        
 
 ## Repair
 
 def test_repairClass(parseItemData):
-    if pytest.item.repairClass == "Carpenter":
+    if pytest.item.repair.job == "Carpenter":
         assert True
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repairClassLevel == 68:
+    if pytest.item.repair.level == 68:
         assert True
 
 def test_repairMaterial(parseItemData):
-    if pytest.item.repairMaterial == 'Grade 7 Dark Matter':
+    if pytest.item.repair.material == 'Grade 7 Dark Matter':
         assert True
-
 
 
 def test_extractable(parseItemData):
@@ -134,6 +133,7 @@ def test_vendors(parseItemData):
 def test_vendorsNames(parseItemData):
     if pytest.item.buyFrom[0]['name'] == 'Tholl Junkmonger':
         assert True
+    else: assert False
 
 def test_vendorLocations(parseItemData):
     if pytest.item.buyFrom[0]['loc'] == 'Kholusia (X:11.9 Y:8.8)':

@@ -23,22 +23,25 @@ def parseItemData(getHtmlSource):
 def test_itemName(parseItemData):
     if pytest.item.name == 'Jebat Eureka':
         assert True
+    else: assert False
 
 def test_glamourOptions(parseItemData):
     if pytest.item.companyCrest == False and \
         pytest.item.glamourChest == False and \
         pytest.item.armorie == False:
         assert True
+    else: assert False  
 
 def test_itemLevel(parseItemData):
     pi = ParseItems()
     res = pi.getDetails(html=pytest.html)
     if res.itemLevel == 405:
         assert True
-
+    else: assert False
 def test_itemAttack(parseItemData):
     if pytest.item.physicalDamage == 0:
         assert True
+    else: assert False
 
 def test_magicDamage(parseItemData):
     if pytest.item.magicDamage == 147:
@@ -49,83 +52,98 @@ def test_magicDamage(parseItemData):
 def test_itemAutoAttack(parseItemData):
     if pytest.item.autoAttack == 5.33:
         assert True
+    else: assert False
 
 def test_delay(parseItemData):
     if pytest.item.delay == 3.12:
         assert True
+    else: assert False
 
 def test_itemJobs(parseItemData):
     if "SCH" in pytest.item.jobs:
         assert True
+    else: assert False
 
 def test_jobLevel(parseItemData):
     if pytest.item.level == 70:
         assert True
+    else: assert False
 
 def test_attributes(parseItemData):
-    if pytest.item.mind == 403 and \
-        pytest.item.vitality == 410:
+    if pytest.item.stats.mind == 403 and \
+        pytest.item.stats.vitality == 410:
         assert True
+    else: assert False
 
 ## Materia
 
 def test_materiaSlots(parseItemData):
-    if pytest.item.materiaSlots == 0:
+    if pytest.item.materia.slots == 0:
         assert True
+    else: assert False
 
 def test_materiaMelderClass(parseItemData):
-    if pytest.item.materiaMelderClass == "":
+    if pytest.item.materia.job == "":
         assert True
+    else: assert False
 
 def test_materiaMelderLevel(parseItemData):
-    if pytest.item.materiaMelderLevel == 00:
+    if pytest.item.materia.level == 00:
         assert True
+    else: assert False
 
 def test_materiaAdvanced(parseItemData):
-    if pytest.item.advancedMelding == False:
+    if pytest.item.materia.advancedMelding == False:
         assert True        
+    else: assert False
 
 ## Repair
 
 def test_repairClass(parseItemData):
-    if pytest.item.repairClass == "Alchemist":
+    if pytest.item.repair.job == "Alchemist":
         assert True
+    else: assert False
 
 def test_repairClassLevel(parseItemData):
     if pytest.item.repairClassLevel == 60:
         assert True
-
+    else: assert False
 def test_repairMaterial(parseItemData):
     if pytest.item.repairMaterial == 'Grade 7 Dark Matter':
         assert True
-
-
+    else: assert False
 
 def test_extractable(parseItemData):
     if pytest.item.extractable == True:
         assert True
+    else: assert False
 
 def test_projectable(parseItemData):
     if pytest.item.projectable == True:
         assert True
+    else: assert False
 
 def test_dyeable(parseItemData):
     if pytest.item.dyeable == True:
         assert True
+    else: assert False
 
 def test_desynth(parseItemData):
     if pytest.item.desynth == 0.0:
         assert True
+    else: assert False
 
 ## Vendors
 
 def test_sellsFor(parseItemData):
     if pytest.item.sellPrice == 0:
         assert True
+    else: assert False
 
 def test_buyFor(parseItemData):
     if pytest.item.buyPrice == 0:
         assert True
+    else: assert False
 
 def test_vendors(parseItemData):
     if len(pytest.item.buyFrom) == 0:
@@ -193,3 +211,4 @@ def test_isUniqueUntradable(parseItemData):
     if pytest.item.untradable == True and \
         pytest.item.unique == True:
         assert True
+    else: assert False
