@@ -49,7 +49,7 @@ def test_itemAttack(parseItemData):
     else: assert False
 
 def test_itemAutoAttack(parseItemData):
-    if pytest.item.autoAttack == 120.96:
+    if pytest.item.autoAttack == 128.96:
         assert True
     else: assert False
     
@@ -135,80 +135,90 @@ def test_desynth(parseItemData):
     else: assert False
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 0:
+    if pytest.item.vendors.sell == 0:
         assert True
     else: assert False
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 0:
+    if pytest.item.vendors.buy == 0:
         assert True
     else: assert False
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 0:
+    if len(pytest.item.vendors.buyFrom) == 0:
         assert True
     else:
         assert False
 
 def test_vendorsNames(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
+    if pytest.item.vendors.buyFrom.__len__() == 0:
         assert True
     else:     
         assert False
 
 def test_vendorLocations(parseItemData):
-    if len(pytest.item.buyFrom) == 0:
+    if len(pytest.item.vendors.buyFrom) == 0:
         assert True
     else:
         assert False
+
+### Related Duties
+
+def test_dropsFromType(parseItemData):
+    if pytest.item.relatedDuties[0].type == 'Trials':
+        assert True
+    else: assert False
+
+def test_dropsFromExp(parseItemData):
+    if pytest.item.relatedDuties[0].expantion == 'Shadowbringers':
+        assert True
+    else: assert False
 
 def test_dropsFrom(parseItemData):
-    if pytest.item.relatedDuties[0]['name'] == 'Cinder Drift (Extreme)':
+    if pytest.item.relatedDuties[0].name == 'Cinder Drift (Extreme)':
         assert True
-    else:
-        assert False
+    else: assert False
 
 def test_dropsFromLevel(parseItemData):
-    if pytest.item.relatedDuties[0]['requiredLevel'] == 80:
+    if pytest.item.relatedDuties[0].level == 80:
         assert True
-    else:
-        assert False
+    else: assert False
     
 def test_dropsFromRequiredItemLevel(parseItemData):
-    if pytest.item.relatedDuties[0]['averageItemLevel'] == 470:
+    if pytest.item.relatedDuties[0].itemLevel == 470:
         assert True
-    else:
-        assert False
+    else: assert False
+
 
 def test_RequiredItemName(parseItemData):
     res = pytest.item.requiredItems
     _len = len(res)
-    if _len == 1:
+    if res[0].items[0].name == 'Ruby Totem':
         assert True
     else:    
         assert False
 
 def test_RequiredItemCount(parseItemData):
-    if pytest.item.requiredItems[0]['itemAmount'] == 10:
+    if pytest.item.requiredItems[0].items[0].amount == 10:
         assert True 
     else:
         assert False
 
 def test_RequiredItemNpc(parseItemData):
-    if pytest.item.requiredItems[0]['npc'] == "C'intana":
+    if pytest.item.requiredItems[0].npc == "C'intana":
         assert True 
     else:
         assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
-    if pytest.item.requiredItems[0]['location'] == 'Mor Dhona (X:22.7 Y:6.6)':
+    if pytest.item.requiredItems[0].location == 'Mor Dhona (X:22.7 Y:6.6)':
         assert True 
     else:
         assert False
 
 def test_isUniqueUntradable(parseItemData):
     if pytest.item.untradable == True and \
-        pytest.item.unique == False:
+        pytest.item.unique == True:
         assert True
     else: assert False
     

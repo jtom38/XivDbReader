@@ -97,34 +97,62 @@ def test_desynth(parseItemData):
         assert True
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 1182:
+    if pytest.item.vendors.sell == 1182:
         assert True
+    else: assert False
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 0:
+    if pytest.item.vendors.buy == 0:
         assert True
+    else: assert False
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 0:
+    if len(pytest.item.vendors.buyFrom) == 0:
         assert True
+    else: assert False
 
-def test_dropsFrom(parseItemData):
-    if pytest.item.relatedDuties[0]['name'] == "The Minstrel's Ballad: Hades's Elegy":
+def test_dropsFromName(parseItemData):
+    if pytest.item.relatedDuties[0].name == "The Minstrel's Ballad: Hades's Elegy":
         assert True
+    else: assert False
+
+def test_dropsFromLevel(parseItemData):
+    if pytest.item.relatedDuties[0].level == 80:
+        assert True
+    else: assert False
+
+def test_dropsFromItemLevel(parseItemData):
+    if pytest.item.relatedDuties[0].itemLevel == 450:
+        assert True
+    else: assert False
+
+def test_dropsFromType(parseItemData):
+    if pytest.item.relatedDuties[0].type == "Trials":
+        assert True
+    else: assert False
+
+def test_dropsFromExp(parseItemData):
+    if pytest.item.relatedDuties[0].expantion == "Shadowbringers":
+        assert True
+    else: assert False
 
 def test_RequiredItemName(parseItemData):
-    if "Hades Totem" in pytest.item.requiredItems[0]['item']:
+    if "Hades Totem" in pytest.item.requiredItems[0].items[0].name:
         assert True
+    else: assert False
 
 def test_RequiredItemCount(parseItemData):
-    if pytest.item.requiredItems[0]['itemAmount'] == 7:
+    if pytest.item.requiredItems[0].items[0].amount == 7:
         assert True 
-
+    else: assert False
+    
 def test_RequiredItemNpc(parseItemData):
-    if "Fathard" in pytest.item.requiredItems[0]['npc']:
+    if "Fathard" in pytest.item.requiredItems[0].npc:
         assert True 
+    else: assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
-    if "Eulmore" in pytest.item.requiredItems[0]['location']:
+    if "Eulmore" in pytest.item.requiredItems[0].location:
         assert True 
+    else: assert False
 

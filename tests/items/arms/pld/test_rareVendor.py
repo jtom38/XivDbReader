@@ -97,15 +97,15 @@ def test_desynth(parseItemData):
         assert True
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 756:
+    if pytest.item.vendors.sell == 756:
         assert True
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 0:
+    if pytest.item.vendors.buy == 0:
         assert True
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 0:
+    if len(pytest.item.vendors.buyFrom) == 0:
         assert True
 
 def test_dropsFrom(parseItemData):
@@ -119,32 +119,32 @@ def test_requiredItemTrades(parseItemData):
     else: assert False
 
 def test_RequiredItemName(parseItemData):
-    if pytest.item.requiredItems[0]['items'][0]['item'] == "Rowena's Token (Poetics)" and \
-        pytest.item.requiredItems[0]['items'][1]['item'] == "Encrypted Tomestone" and \
-        pytest.item.requiredItems[1]['items'][0]['item'] == "Silver Chocobo Feather" and \
-        pytest.item.requiredItems[2]['items'][0]['item'] == "Silver Chocobo Feather" and \
-        pytest.item.requiredItems[3]['items'][0]['item'] == "Silver Chocobo Feather":
+    if pytest.item.requiredItems[0].items[0].name == "Rowena's Token (Poetics)" and \
+        pytest.item.requiredItems[0].items[1].name == "Encrypted Tomestone" and \
+        pytest.item.requiredItems[1].items[0].name == "Silver Chocobo Feather" and \
+        pytest.item.requiredItems[2].items[0].name == "Silver Chocobo Feather" and \
+        pytest.item.requiredItems[3].items[0].name == "Silver Chocobo Feather":
         assert True
     else: assert False
 
 def test_RequiredItemCount(parseItemData):
-    if pytest.item.requiredItems[0]['items'][0]['amount'] == 7 and \
-        pytest.item.requiredItems[0]['items'][1]['amount'] == 1 and \
-        pytest.item.requiredItems[1]['items'][0]['amount'] == 5 and \
-        pytest.item.requiredItems[1]['items'][0]['amount'] == 5 and \
-        pytest.item.requiredItems[1]['items'][0]['amount'] == 5:    
+    if pytest.item.requiredItems[0].items[0].amount == 7 and \
+        pytest.item.requiredItems[0].items[1].amount == 1 and \
+        pytest.item.requiredItems[1].items[0].amount == 5 and \
+        pytest.item.requiredItems[1].items[0].amount == 5 and \
+        pytest.item.requiredItems[1].items[0].amount == 5:    
         assert True 
     else: assert False
 
 def test_RequiredItemNpc(parseItemData):
-    if "Aelina" in pytest.item.requiredItems[0]['npc'] and \
-        "Calamity Salvager" in pytest.item.requiredItems[1]['npc'] and \
-        "Calamity Salvager" in pytest.item.requiredItems[2]['npc'] and \
-        "Calamity Salvager" in pytest.item.requiredItems[3]['npc']:
+    if "Aelina" in pytest.item.requiredItems[0].npc and \
+        "Calamity Salvager" in pytest.item.requiredItems[1].npc and \
+        "Calamity Salvager" in pytest.item.requiredItems[2].npc and \
+        "Calamity Salvager" in pytest.item.requiredItems[3].npc:
         assert True
     else: assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
-    if "Eulmore" in pytest.item.requiredItems[0]['location']:
+    if "Eulmore" in pytest.item.requiredItems[0].location:
         assert True 
 

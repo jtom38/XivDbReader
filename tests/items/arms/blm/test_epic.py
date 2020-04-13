@@ -79,7 +79,7 @@ def test_repairClassLevel(parseItemData):
 
 def test_sellsFor(parseItemData):
     res = pytest.e_item
-    if res.sellPrice == 0:
+    if res.vendors.sell == 0:
         assert True
 
 def test_dropsFrom(parseItemData):

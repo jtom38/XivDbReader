@@ -59,75 +59,94 @@ def test_attributes(parseItemData):
     if pytest.item.stats.strength == 288 and \
         pytest.item.stats.vitality == 325:
         assert True
+    else: assert False
 
 def test_materiaSlots(parseItemData):
-    if pytest.item.materiaSlots == 0:
+    if pytest.item.materia.slots == 0:
         assert True
+    else: assert False
 
 def test_repairClass(parseItemData):
-    if pytest.item.repairClass == "Blacksmith":
+    if pytest.item.repair.job == "Blacksmith":
         assert True
+    else: assert False
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repairClassLevel == 60:
+    if pytest.item.repair.level == 60:
         assert True
+    else: assert False
 
 def test_repairMaterial(parseItemData):
-    if pytest.item.repairMaterial == 'Grade 7 Dark Matter':
+    if pytest.item.repair.material == 'Grade 7 Dark Matter':
         assert True
+    else: assert False
 
 def test_extractable(parseItemData):
     if pytest.item.extractable == True:
         assert True
+    else: assert False
 
 def test_projectable(parseItemData):
     if pytest.item.projectable == True:
         assert True
+    else: assert False
 
 def test_dyeable(parseItemData):
     if pytest.item.dyeable == True:
         assert True
+    else: assert False
 
 def test_desynth(parseItemData):
     if pytest.item.desynth == 0.0:
         assert True
+    else: assert False
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 0:
+    if pytest.item.vendors.sell == 0:
         assert True
+    else: assert False
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 0:
+    if pytest.item.vendors.buy == 0:
         assert True
+    else: assert False
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 5:
+    if len(pytest.item.vendors.buyFrom) == 0:
         assert True
+    else: assert False
 
 def test_vendorsNames(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
+    if pytest.item.vendors.buyFrom.__len__() == 0:
         assert True
+    else: assert False
 
 def test_vendorLocations(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
+    if pytest.item.vendors.buyFrom.__len__() == 0:
         assert True
+    else: assert False
 
 def test_dropsFrom(parseItemData):
     if pytest.item.relatedDuties.__len__() == 0:
         assert True
+    else: assert False
 
 def test_RequiredItemName(parseItemData):
     if pytest.item.requiredItems.__len__() == 0:
         assert True
+    else: assert False
 
 def test_RequiredItemCount(parseItemData):
     if pytest.item.requiredItems.__len__() == 0:
         assert True 
+    else: assert False
 
 def test_RequiredItemNpc(parseItemData):
     if pytest.item.requiredItems.__len__() == 0:
         assert True 
+    else: assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
     if pytest.item.requiredItems.__len__() == 0:
         assert True 
+    else: assert False

@@ -1,5 +1,5 @@
 
-from XivDbReader.collections import Item, Weapon, Armor, RepairInfo, Materia, Stats
+from XivDbReader.collections import Item, Weapon, Armor, RepairInfo, Materia, Stats, ExchangeFor, ExchangeItems, DropsFrom, Vendors, Value
 from XivDbReader.exceptions import UnableToFindValue
 
 from typing import Dict, List
@@ -39,7 +39,17 @@ class ParseItems():
                 if i == '\n':
                     continue
 
-                if len(i.contents) == 5:
+                # Gets what slot the item goes to
+                #if i.attrs['class'][0] == 'db-view__item__text__name':
+                #    slot = i.text
+                #    continue
+
+                if innerText[0].contents[1].attrs['class'][0] == '':
+                    pass
+
+                # i.attrs['class'][0]
+                #'db-view__item__text__element'
+                if i.attrs['class'][0] == 'db-view__item__text__element':
                     for rareType in i.contents:
                         if rareType == '\n':
                             continue
@@ -51,8 +61,9 @@ class ParseItems():
                         if rareType.text == 'Untradable':
                             untradable = True
                             continue
+                    continue
 
-                if len(i.contents) == 7:
+                if i.attrs['class'][0] == 'db-view__item__storage':
                     for g in i.contents:
                         if g == '\n':
                             continue
@@ -61,23 +72,30 @@ class ParseItems():
                         if "company crests" in alt:
                             if "Cannot" in alt: 
                                 companyCrest = False
+                                continue
                             else: 
                                 companyCrest = True
+                                continue
                         
                         if "dresser" in alt:
                             if "Cannot" in alt: 
                                 glamourChest = False
+                                continue
                             else: 
                                 glamourChest = True
+                                continue
                         
                         if "armoire" in alt: 
                             if "Cannot" in alt: 
                                 armorie = False
+                                continue
                             else: 
                                 armorie = True
+                                continue
+                    continue
 
                 # Gets the name of the time
-                if i.name == 'h2':
+                if i.attrs['class'][0] == 'db-view__item__text__name':
                     name = i.text
                     name = name.replace('\n', '')
                     name = name.replace('\t', '')
@@ -93,12 +111,15 @@ class ParseItems():
                         rarity = "Rare"
                     elif "epic" in rarity:
                         rarity = "Epic"
+
+                    slot = name
                     continue
 
-                # Gets what slot the item goes to
                 if i.attrs['class'][0] == 'db-view__item__text__category':
                     slot = i.text
+
         except Exception as e:
+            print(e)
             pass
 
         if slot == "Shield" or \
@@ -113,6 +134,11 @@ class ParseItems():
         elif "Arm" in slot or \
             "Grimoire" in slot:
             self.item = Weapon()
+
+        self.item.repair = RepairInfo()
+        self.item.materia = Materia()
+        self.item.stats = Stats()
+        self.item.vendors = Value()
 
         self.item.name = name
         self.item.rarity = rarity
@@ -293,13 +319,14 @@ class ParseItems():
 
         try:
             footer = soup.find_all('div', class_='db-view__item_footer')
-            self.item.buyPrice = 0
-            self.item.sellPrice = 0
-            self.item.marketProhibited = False
+            self.buyPrice = 0
+            self.sellPrice = 0
+            self.sellOnMarket = True
             self.item.materia.advancedMelding = True
             # Check for Advanced Melding
             for i in footer[0].contents:
                 if i.text == 'Advanced Melding Forbidden':
+
                     self.item.materia.advancedMelding = False
                     continue
 
@@ -310,7 +337,7 @@ class ParseItems():
                 elif "Sale Price:" in i.text:
                     textSplit = i.text.split("Sale Price: ")
                     gilSplit = textSplit[1].split(' gil')
-                    self.item.buyPrice = int(gilSplit[0].replace(',',''))
+                    self.item.vendors.buy = int(gilSplit[0].replace(',',''))
                     continue
 
                 elif 'Sells for' in i.text:
@@ -329,16 +356,16 @@ class ParseItems():
                     gil = gil.replace(' ', '')
 
 
-                    if self.item.sellPrice != 0:
+                    if self.item.vendors.sell != 0:
                         #HQ Item
                         #TODO HQ Sell Price
                         pass
                     else:
-                        self.item.sellPrice = int(gil)
+                        self.item.vendors.sell = int(gil)
                     continue
 
                 elif i.text == 'Market Prohibited':
-                    self.item.marketProhibited = True
+                    self.item.vendors.sellOnMarket = False
                     continue
                 
                 else:
@@ -350,21 +377,26 @@ class ParseItems():
 
         try:
             vendors = soup.find_all('div', class_='db-shop__npc__space')
-            self.item.buyFrom: List = []
+            #self.item.buyFrom: List = []
             if vendors != []:
+                #self.item.vendors: Value = Value()
+                #self.item.vendors.buy = self.buyPrice
+                #self.item.vendors.sell = self.sellPrice
+                #self.item.vendors.sellOnMarket = self.sellOnMarket
                 vendorRows = vendors[0].contents[0].contents[1].contents
                 vendorsList: List = []
                 for v in vendorRows:
-                    vendorsDict: Dict = {'name': '', 'loc': ''}
+
+                    vendors: Vendors = Vendors()
 
                     name = v.contents[0].contents[0].text
                     loc = v.contents[1].text
                     if name != '' and loc != '':
-                        vendorsDict['name'] = name
-                        vendorsDict['loc'] = loc
-                        vendorsList.append(vendorsDict)
+                        vendors.name = name
+                        vendors.location = loc
+                        vendorsList.append(vendors)
 
-                self.item.buyFrom = vendorsList
+                self.item.vendors.buyFrom = vendorsList
         except:
             print(f"Item did not contain venders")
 
@@ -381,11 +413,14 @@ class ParseItems():
                     if "Related Duties" in a.contents[1].text:
                         dutiesList: List = []
                         try:
-                            duty: Dict = {'name': '', 'requiredLevel': 0, 'averageItemLevel': 0}
+                            #duty: Dict = {'name': '', 'requiredLevel': 0, 'averageItemLevel': 0}
+                            duty = DropsFrom()
                             duties = a.contents[3].contents[1].contents[3]
-                            duty['name'] = duties.contents[1].contents[1].contents[3].contents[0]
-                            duty['requiredLevel'] = int(duties.contents[1].contents[3].text)
-                            duty['averageItemLevel'] = int(duties.contents[1].contents[5].string)
+                            duty.type = duties.contents[1].contents[1].contents[1].contents[1].text
+                            duty.expantion = duties.contents[1].contents[1].contents[1].contents[3].text
+                            duty.name = duties.contents[1].contents[1].contents[3].contents[0]
+                            duty.level = int(duties.contents[1].contents[3].text)
+                            duty.itemLevel = int(duties.contents[1].contents[5].string)
                             dutiesList.append(duty)
 
                             self.item.relatedDuties = dutiesList
@@ -527,30 +562,27 @@ class ParseItems():
             requiredItemsList: List = []
 
             # this is the core structure
-            requiredItemsDict: Dict = {'items': [], 'npc': '', 'location': ''}
+            exchange: ExchangeFor = ExchangeFor()
+            #requiredItemsDict: Dict = {'items': [], 'npc': '', 'location': ''}
 
             items: List = []
             for i in data.contents[0].contents[1]:
-                item: Dict = {'item': '', 'amount': 0}
+                #item: Dict = {'item': '', 'amount': 0}
+                item: ExchangeItems = ExchangeItems()
                 thin = i.contents[0].next_sibling.contents[0].contents
-                item['item'] = thin[0].text
-                item['amount'] = int(thin[1].text)
+                item.name = thin[0].text
+                item.amount = int(thin[1].text)
                 items.append(item)
 
-            requiredItemsDict['items'] = items
-            # Item amount is always the last value in the array
-            #htmlItem = data.contents[0].contents[1].contents[0].contents[1]
-            #itemName = data.contents[0].contents[1].text
-            #requiredItemsDict['item'] = itemName
+            #requiredItemsDict['items'] = items
+            exchange.items = items
 
-            #requiredItemsDict['itemAmount'] = int(itemAmount)
-            #requiredItemsDict['itemAmount'] = int(htmlItem.contents[0].contents[1].text)
-            #requiredItemsDict['itemAmount'] = data.contents[1].previous_sibling.contents[1].contents[0].contents[0].next_sibling.contents[0].contents[0].next_sibling.text
-            #requiredItemsDict['item'] = itemName.replace(itemAmount, '').replace(" ", '')
-            #requiredItemsDict['item'] = data.contents[1].previous_sibling.contents[1].contents[0].contents[0].next_sibling.contents[0].contents[0].text
-            requiredItemsDict['npc'] = data.contents[1].text
-            requiredItemsDict['location'] = data.contents[2].text
-            return requiredItemsDict
+            #requiredItemsDict['npc'] = data.contents[1].text
+            exchange.npc = data.contents[1].text
+
+            #requiredItemsDict['location'] = data.contents[2].text
+            exchange.location = data.contents[2].text
+            return exchange
         except Exception as e:
             print(e)
             pass

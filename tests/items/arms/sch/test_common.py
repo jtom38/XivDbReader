@@ -50,7 +50,7 @@ def test_magicalAttack(parseItemData):
     else: assert False
 
 def test_itemAutoAttack(parseItemData):
-    if pytest.item.autoAttack == 99.83:
+    if pytest.item.autoAttack == 99.84:
         assert True
     else: assert False
 
@@ -84,7 +84,7 @@ def test_materiaSlots(parseItemData):
         assert True
     else: assert False
 def test_materiaMelderClass(parseItemData):
-    if pytest.item.materia.job == "Alchemist":
+    if pytest.item.materia.melderJob == "Alchemist":
         assert True
     else: assert False
 
@@ -138,29 +138,34 @@ def test_desynth(parseItemData):
 ## Vendors
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 638:
+    if pytest.item.vendors.sell == 638:
         assert True
     else: assert False
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 40878:
+    if pytest.item.vendors.buy == 40878:
         assert True
     else: assert False
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 2:
+    if len(pytest.item.vendors.buyFrom) == 2:
         assert True
     else: assert False
 
 def test_vendorsNames(parseItemData):
-    if pytest.item.buyFrom[0]['name'] == 'Pixie Hoarder' and \
-        pytest.item.buyFrom[1]['name'] == 'Ys Gyuf':
+    if pytest.item.vendors.buyFrom[0].name == 'Pixie Hoarder' and \
+        pytest.item.vendors.buyFrom[1].name == 'Ys Gyuf':
         assert True
     else: assert False
 
 def test_vendorLocations(parseItemData):
-    if pytest.item.buyFrom[0]['loc'] == 'Il Mheg (X:14.8 Y:32.2)' and \
-        pytest.item.buyFrom[1]['loc'] == 'Il Mheg (X:19.7 Y:4.1)':
+    if pytest.item.vendors.buyFrom[0].location == 'Il Mheg (X:14.8 Y:32.2)' and \
+        pytest.item.vendors.buyFrom[1].location == 'Il Mheg (X:19.7 Y:4.1)':
+        assert True
+    else: assert False
+
+def test_vendorsSellOnMarket(parseItemData):
+    if pytest.item.vendors.sellOnMarket == True:
         assert True
     else: assert False
 
@@ -177,7 +182,7 @@ def test_dropsFromLevel(parseItemData):
     else: assert False
 
 def test_dropsFromRequiredItemLevel(parseItemData):
-    if pytest.item.relatedDuties.__len__ == 0:
+    if pytest.item.relatedDuties.__len__() == 0:
         assert True
     else: assert False
 

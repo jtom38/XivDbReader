@@ -141,48 +141,48 @@ def test_desynth(parseItemData):
     else: assert False
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 1062:
+    if pytest.item.vendors.sell == 1062:
         assert True
     else: assert False
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 0:
+    if pytest.item.vendors.buy == 0:
         assert True
     else: assert False
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 0:
+    if len(pytest.item.vendors.buyFrom) == 0:
         assert True
     else:
         assert False
 
 def test_vendorsNames(parseItemData):
-    res = pytest.item.buyFrom
+    res = pytest.item.vendors.buyFrom
     if res == 0:
         assert True
 
 def test_vendorLocations(parseItemData):
-    res = pytest.item.buyFrom
+    res = pytest.item.vendors.buyFrom
     if res.__len__() == 0:
         assert True
 
 def test_dropsFrom(parseItemData):
     res = pytest.item.relatedDuties
-    if res[0]['name'] == 'Holminster Switch':
+    if res[0].name == 'Holminster Switch':
         assert True
     else: 
         assert False
 
 def test_dropsFromLevel(parseItemData):
     res = pytest.item.relatedDuties 
-    if res[0]['requiredLevel'] == 71:
+    if res[0].level == 71:
         assert True
     else: 
         assert False
     
 def test_dropsFromRequiredItemLevel(parseItemData):
     res = pytest.item.relatedDuties
-    if res[0]['averageItemLevel'] == 370:
+    if res[0].itemLevel == 370:
         assert True
 
 def test_RequiredItemName(parseItemData):

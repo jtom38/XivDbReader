@@ -119,24 +119,24 @@ def test_desynth(parseItemData):
 ## Vendors
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 691:
+    if pytest.item.vendors.sell == 691:
         assert True
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 44283:
+    if pytest.item.vendors.buy == 44283:
         assert True
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 1:
+    if len(pytest.item.vendors.buyFrom) == 1:
         assert True
 
 def test_vendorsNames(parseItemData):
-    if pytest.item.buyFrom[0]['name'] == 'Tholl Junkmonger':
+    if pytest.item.vendors.buyFrom[0].name == 'Tholl Junkmonger':
         assert True
     else: assert False
 
 def test_vendorLocations(parseItemData):
-    if pytest.item.buyFrom[0]['loc'] == 'Kholusia (X:11.9 Y:8.8)':
+    if pytest.item.vendors.buyFrom[0].location == 'Kholusia (X:11.9 Y:8.8)':
         assert True
 
 ## Instances/Fights

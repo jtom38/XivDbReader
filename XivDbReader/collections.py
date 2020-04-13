@@ -101,9 +101,34 @@ class Stats():
         self.piety: int = 0
         pass
 
-class RequiredItems():
+class ExchangeItems():
     def __init__(self):
+        self.name: str = ''
+        self.amount: int = 0
         pass
 
-    def __setDefaults__(self):
-        pass
+class ExchangeFor():
+    def __init__(self):
+        self.items: List[ExchangeItems] = []
+        self.npc: str = ""
+        self.location: str = ""
+
+class DropsFrom():
+    def __init__(self):
+        self.type: str = ''
+        self.expantion: str = ''
+        self.name: str = ''
+        self.level: int = 0
+        self.itemLevel: int = 0
+
+class Value():
+    def __init__(self):
+        self.buy: int = 0
+        self.sell: int = 0
+        self.sellOnMarket: bool = True
+        self.buyFrom: List[Vendors] = []
+
+class Vendors():
+    def __init__(self):
+        self.name: str = ''
+        self.location: str = ''

@@ -84,7 +84,7 @@ def test_materiaSlots(parseItemData):
     else: assert False
 
 def test_materiaMelderClass(parseItemData):
-    if pytest.item.materia.melderClass == "Alchemist":
+    if pytest.item.materia.melderJob == "Alchemist":
         assert True
     else: assert False
 
@@ -106,7 +106,7 @@ def test_repairClass(parseItemData):
     else: assert False
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repair.level == 70:
+    if pytest.item.repair.level == 60:
         assert True
     else: assert False
 
@@ -136,27 +136,27 @@ def test_desynth(parseItemData):
     else: assert False
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 1826:
+    if pytest.item.vendors.sell == 1826:
         assert True
     else: assert False
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 0:
+    if pytest.item.vendors.buy == 0:
         assert True
     else: assert False
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 0:
+    if len(pytest.item.vendors.buyFrom) == 0:
         assert True
     else: assert False
 
 def test_vendorsNames(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
+    if pytest.item.vendors.buyFrom.__len__() == 0:
         assert True
     else: assert False
 
 def test_vendorLocations(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
+    if pytest.item.vendors.buyFrom.__len__() == 0:
         assert True
     else: assert False
 

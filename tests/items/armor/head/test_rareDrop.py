@@ -103,15 +103,15 @@ def test_materiaAdvanced(parseItemData):
 ## Repair
 
 def test_repairClass(parseItemData):
-    if pytest.item.repairClass == "Goldsmith":
+    if pytest.item.repair.job == "Goldsmith":
         assert True
 
 def test_repairClassLevel(parseItemData):
-    if pytest.item.repairClassLevel == 60:
+    if pytest.item.repair.level == 60:
         assert True
 
 def test_repairMaterial(parseItemData):
-    if pytest.item.repairMaterial == 'Grade 7 Dark Matter':
+    if pytest.item.repair.material == 'Grade 7 Dark Matter':
         assert True
 
 
@@ -135,25 +135,25 @@ def test_desynth(parseItemData):
 ## Vendors
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 1004:
+    if pytest.item.vendors.sell == 1004:
         assert True
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 0:
+    if pytest.item.vendors.buy == 0:
         assert True
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 0:
+    if len(pytest.item.vendors.buyFrom) == 0:
         assert True
 
 def test_vendorsNames(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
+    if pytest.item.vendors.buyFrom.__len__() == 0:
         assert True
     else:
         assert False
 
 def test_vendorLocations(parseItemData):
-    if pytest.item.buyFrom.__len__() == 0:
+    if pytest.item.vendors.buyFrom.__len__() == 0:
         assert True
     else: assert False
 
@@ -178,27 +178,27 @@ def test_dropsFromRequiredItemLevel(parseItemData):
 def test_RequiredItemName(parseItemData):
     res = pytest.item.requiredItems
     
-    if res[0]['items'][0]['item'] == 'Carbontwine' and \
-        res[0]['items'][1]['item'] == 'Ironworks Visor of Maiming':
+    if res[0].items[0].name == 'Carbontwine' and \
+        res[0].items[1].name == 'Ironworks Visor of Maiming':
         assert True
     else: 
         assert False
 
 def test_RequiredItemCount(parseItemData):
-    if pytest.item.requiredItems[0]['items'][0]['amount'] == 1 and \
-        pytest.item.requiredItems[0]['items'][1]['amount'] == 1:
+    if pytest.item.requiredItems[0].items[0].amount == 1 and \
+        pytest.item.requiredItems[0].items[1].amount == 1:
         assert True 
     else:
         assert False
 
 def test_RequiredItemNpc(parseItemData):
-    if pytest.item.requiredItems[0]['npc'] == 'Drake':
+    if pytest.item.requiredItems[0].npc == 'Drake':
         assert True 
     else:
         assert False
 
 def test_RequiredItemNpcLocation(parseItemData):
-    if pytest.item.requiredItems[0]['location'] == 'North Shroud (X:30.3 Y:20.1)':
+    if pytest.item.requiredItems[0].location == 'North Shroud (X:30.3 Y:20.1)':
         assert True 
     else:
         assert False

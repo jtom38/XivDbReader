@@ -95,29 +95,34 @@ def test_desynth(parseItemData):
         assert True
 
 def test_sellsFor(parseItemData):
-    if pytest.item.sellPrice == 7:
+    if pytest.item.vendors.sell == 7:
         assert True
+    else: assert False
 
 def test_buyFor(parseItemData):
-    if pytest.item.buyPrice == 316:
+    if pytest.item.vendors.buy == 316:
         assert True
+    else: assert False
 
 def test_vendors(parseItemData):
-    if len(pytest.item.buyFrom) == 5:
+    if len(pytest.item.vendors.buyFrom) == 5:
         assert True
+    else: assert False
 
 def test_vendorsNames(parseItemData):
-    if pytest.item.buyFrom[0]['name'] == 'Faezghim' and \
-        pytest.item.buyFrom[1]['name'] == "Geraint" and \
-        pytest.item.buyFrom[2]['name'] == 'Gealous Guggernaunt' and \
-        pytest.item.buyFrom[3]['name'] == 'Merchant & Mender' and \
-        pytest.item.buyFrom[4]['name'] == 'Merchant & Mender':
+    if pytest.item.vendors.buyFrom[0].name == 'Faezghim' and \
+        pytest.item.vendors.buyFrom[1].name == "Geraint" and \
+        pytest.item.vendors.buyFrom[2].name == 'Jealous Juggernaut' and \
+        pytest.item.vendors.buyFrom[3].name == 'Merchant & Mender' and \
+        pytest.item.vendors.buyFrom[4].name == 'Merchant & Mender':
         assert True
+    else: assert False
 
 def test_vendorLocations(parseItemData):
-    if pytest.item.buyFrom[0]['loc'] == 'Limsa Lominsa Lower Decks (X:6.5 Y:11.9)' and \
-        pytest.item.buyFrom[1]['loc'] == 'Old Gridania (X:14.6 Y:9.7)' and \
-        pytest.item.buyFrom[2]['loc'] == "Ul'dah - Steps of Thal (X:13.9 Y:11.0)" and \
-        pytest.item.buyFrom[3]['loc'] == "Western Thanalan (X:22.3 Y:16.1)" and \
-        pytest.item.buyFrom[4]['loc'] == "Western Thanalan (X:15.3 Y:18.5)":
+    if pytest.item.vendors.buyFrom[0].location == 'Limsa Lominsa Lower Decks (X:6.5 Y:11.9)' and \
+        pytest.item.vendors.buyFrom[1].location == 'Old Gridania (X:14.6 Y:9.7)' and \
+        pytest.item.vendors.buyFrom[2].location == "Ul'dah - Steps of Thal (X:13.9 Y:11.0)" and \
+        pytest.item.vendors.buyFrom[3].location == "Western Thanalan (X:22.3 Y:16.1)" and \
+        pytest.item.vendors.buyFrom[4].location == "Western Thanalan (X:15.3 Y:18.5)":
         assert True
+    else: assert False
