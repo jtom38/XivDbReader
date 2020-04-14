@@ -141,6 +141,7 @@ class ParseItems():
         self.item.vendors = Value()
 
         self.item.name = name
+        self.item.slot = slot
         self.item.rarity = rarity
         self.item.unique = unique
         self.item.untradable = untradable

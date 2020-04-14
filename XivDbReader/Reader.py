@@ -62,3 +62,17 @@ class Reader():
             item = pi.getDetails(href=url)
             return item
         pass
+
+    def getItemLinksByJob(self, job: str, slot: str, level: str = '*', url: str = '', page: int = 0):
+        """
+        About: This will go get all the item links from a page and return the results.
+
+        Params:
+
+        """
+        self.__settings__.links.getArmLink('', 1)
+        pl = ParseList()
+
+    def getItemLinksByPage(self, page: int = 0):
+        
+        self.__settings__.links.getArmLink(page)
