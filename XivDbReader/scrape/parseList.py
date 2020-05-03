@@ -18,8 +18,8 @@ class ParseList():
         self.href = href
         return requests.get(href)
 
-    def FindLinks(self, page: str = '*') -> List:
-        links = []
+    def FindLinks(self, page: str = '*') -> List[str]:
+        links: List[str] = []
         html: str = requests.get(self.url)
         soup: BeautifulSoup = BeautifulSoup(html.text, 'html.parser')
         table = soup.find_all('table', class_='db-table')

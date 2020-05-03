@@ -160,6 +160,9 @@ class ParseItems():
                     if p == '\n':
                         continue
 
+                    if p.attrs['class'][0] == 'latest_patch__major__icon':
+                        continue
+
                     if p.attrs['class'][0] == "staining":
                         continue
 
