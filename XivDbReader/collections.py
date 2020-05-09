@@ -206,6 +206,7 @@ class Value():
         self.buy: int = 0
         self.sell: int = 0
         self.sellOnMarket: bool = True
+        self.unsellable: bool = False
         self.buyFrom: List[Vendors] = []
 
 class Vendors():
