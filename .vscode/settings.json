@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/Users/jamestombleson/.local/share/virtualenvs/ffxiv-Rud_--Yd/bin/python",
+    "python.pythonPath": "/usr/local/bin/python",
     "python.testing.pytestArgs": [
         "tests"
     ],

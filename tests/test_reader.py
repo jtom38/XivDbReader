@@ -1,20 +1,17 @@
  
-from XivDbReader.Reader import Reader
-
+#from XivDbReader.Reader import Reader
+from XivDbReader import Reader
 
 def test_armsPld():
-    r = Reader()
-    res = r.getArms('Pld',1)
+    
+    r = Reader(job='pld')
+    res = r.getArms(recordLimit=1)
+    #res = r.getArms('Pld',1)
     if res.__len__() == 1:
         assert True
 
-def test_armsPld10():
-    r = Reader()
-    res = r.getArms('pld', 10)
-    if len(res) == 10:
+def test_armsWar():
+    r = Reader(job='war')
+    res = r.getArms(recordLimit=1)
+    if res.__len__() == 1:
         assert True
-    else: assert False
-
-def test_linksArms():
-    r = Reader()
-    res = r.getItemLinks

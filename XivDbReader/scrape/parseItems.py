@@ -9,6 +9,7 @@ import requests
 
 class ParseItems():
     def __init__(self):
+        self.soup: BeautifulSoup
         pass
 
     def GetHtmlSource(self, href: str) -> str:
@@ -24,6 +25,7 @@ class ParseItems():
         self.item = Item()
 
         soup: BeautifulSoup = BeautifulSoup(html.text, 'html.parser')
+        self.soup = soup
 
         itemText = soup.find_all('div', class_='db-view__item__text')
         innerText = itemText[0].contents[1]
@@ -150,39 +152,13 @@ class ParseItems():
         self.item.glamourChest = glamourChest
         self.item.armorie = armorie
 
+        # Find what patch we are reviewing data for
+        self.patchVersion()
+
         itemLevel: str = soup.find_all('div', class_='db-view__item_level')[0].text
         self.item.itemLevel: int = int(itemLevel.replace('Item Level ', ''))
 
-        try:
-            pictureUrl = soup.find_all('div', class_='db-view__item__icon latest_patch__major__detail__item')
-            try:
-                for p in pictureUrl[0].contents:
-                    if p == '\n':
-                        continue
-
-                    if p.attrs['class'][0] == "staining":
-                        continue
-
-                    elif p.attrs['class'][0] == 'db-view__item__icon__cover':
-                        continue
-
-                    elif p.attrs['width'] == '152':
-                        continue
-
-                    elif p.attrs['width'] == '128':
-                        self.item.pictureUrl = p.attrs['src']
-                        self.item.pictureWidth = int(p.attrs['width'])
-                        self.item.pictureHeight = int(p.attrs['height'])
-                    else:
-                        print("new values found in pictureUrl")
-            except Exception as e:
-                print("Error parsing pictureUrl", e)
-
-            #self.item.pictureUrl = pictureUrl[0].contents[5].attrs['src']
-            #picutreHeight: int = pictureUrl[0].contents[3].attrs['height']
-            #pictureWidth: int = pictureUrl[0].contents[3].attrs['width']
-        except Exception as e:
-            raise UnableToFindValue("msg: Unable to find a 'div' with class 'db-view__item__icon latest_patch__major__detail__item'")
+        self.itemPicture()
 
         try:
             #specValue = soup.find_all('div', class_='db-view__item_spec__value')
@@ -220,93 +196,18 @@ class ParseItems():
         except Exception as e:
             pass
 
-        try:
-            bonusAttr = soup.find_all('div', class_='sys_nq_element')
+        self.requiredItems()
 
-            # Bonus Stats
-            self.__getBonusAttr__(bonusAttr)
+        self.jobs()
 
-            self.item.requiredItems = []
-            if "Required Items" in bonusAttr[2].contents[0].text:
-                requiredItemsList: List = []
+        # ilevel
+        self.iLevel()
 
-                for ri in bonusAttr[2].contents:
-                    if ri.text == "Required Items":
-                        continue
+        # Materia
+        self.materia()
 
-                    if ri.contents[0].attrs['class'][0] == 'db-shop__item':
-                        requiredItemsList.append(self.getRequiredItems(ri))
-                    
-                self.item.requiredItems = requiredItemsList
-        except:
-            print("Unable to find 'div class='sys_nq_element'.  Could be expected result based on the item.")
-            #raise UnableToFindValue("Unable to find 'div class='sys_nq_element'")
-
-        try:
-            htmlJobs = soup.find_all('div', {'class': "db-view__item_equipment__class"})
-            jobsSplit = htmlJobs[0].contents[0].split(' ')
-            self.item.jobs = []
-            for j in jobsSplit:
-                self.item.jobs.append(j)
-        except Exception as e:
-            print(e)
-
-        try:
-            htmlJobLevel = soup.find_all('div', {'class': 'db-view__item_equipment__level'})
-            if "Lv." in htmlJobLevel[0].text:
-                level = htmlJobLevel[0].text.replace("Lv. ", '')
-                self.item.level = int(level)
-            else:
-                self.item.level = 0
-        except Exception as e:
-            print("Failed to find what level is required for the item.", e)
-
-        try:
-            #materia_ = soup.find_all('div', class_='db-popup__inner')
-            materia_ = soup.find_all("ul", {'class': 'db-view__materia_socket'})
-            self.item.materia = Materia()
-            self.item.materia.slots = 0
-            self.item.materia.melderJob = ''
-            self.item.materia.melderLevel = 0
-            if materia_ != []:
-                self.__parseMateriaValues__(materia_)
-            else:
-                self.item.materia.slots = 0
-                self.item.materia.melderJob = None
-                print(f"{self.item.name} seems to not accept materia.")
-        except:
-            print(f'Unable to find expected HTML for materia')
-
-        try:
-            repair = soup.find_all('ul', class_='db-view__item_repair')
-            self.item.repair = RepairInfo()
-            for r in repair[0].contents:
-                if r == '\n':
-                    continue
-
-                if r.contents[0].text == "Repair Level":
-                    _repair = r.contents[0].next_sibling.text.split(" Lv. ")                    
-                    self.item.repair.job = _repair[0]
-                    self.item.repair.level = int(_repair[1])
-                    continue
-                
-                if r.contents[0].string == "Materials":
-                    self.item.repair.material = r.contents[1].text
-                    continue
-
-                if r.contents[0].text == "Materia Melding":
-                    _melder = r.contents[1].text.split(' Lv. ')
-                    self.item.materia.melderJob = _melder[0]
-                    self.item.materia.melderLevel = int(_melder[1])
-                    pass
-
-            if "Lv." in repair[0].contents[1].contents[1].text:
-                repairBy = repair[0].contents[1].contents[1].contents[0].split(" Lv. ")
-                self.item.repair.job: str = repairBy[0]
-                self.item.repair.level: int = int(repairBy[1])
-                self.item.repair.material: str = repair[0].contents[1].next_sibling.contents[1].contents[0]
-        except Exception as e:
-            print(f"Unable to find expected HTML for repair values")
+        # Repair Values
+        self.repair()
 
         try:
             itemInfo2 = soup.find_all('ul', class_='db-view__item-info__list')
@@ -318,120 +219,13 @@ class ParseItems():
             print("Item was missing 'db-view__item-info__list' class")
 
 
-        try:
-            footer = soup.find_all('div', class_='db-view__item_footer')
-            self.buyPrice = 0
-            self.sellPrice = 0
-            self.sellOnMarket = True
-            self.item.materia.advancedMelding = True
-            # Check for Advanced Melding
-            for i in footer[0].contents:
-                if i.text == 'Advanced Melding Forbidden':
+        self.__getMarketValues__()
 
-                    self.item.materia.advancedMelding = False
-                    continue
-
-                elif 'Available for Purchase:' in i.text:
-                    
-                    continue
-                
-                elif "Sale Price:" in i.text:
-                    textSplit = i.text.split("Sale Price: ")
-                    gilSplit = textSplit[1].split(' gil')
-                    self.item.vendors.buy = int(gilSplit[0].replace(',',''))
-                    continue
-
-                elif 'Sells for' in i.text:
-                    split = i.text.split("Sells for")
-                    if len(split) >= 2:
-                        for g in split:
-                            if 'gil' in g:
-                                gil = g
-                                continue
-
-                    else:
-                        gil = split
-
-                    gil = gil.replace(" gil", '')
-                    gil = gil.replace(',', '')
-                    gil = gil.replace(' ', '')
-
-
-                    if self.item.vendors.sell != 0:
-                        #HQ Item
-                        #TODO HQ Sell Price
-                        pass
-                    else:
-                        self.item.vendors.sell = int(gil)
-                    continue
-
-                elif i.text == 'Market Prohibited':
-                    self.item.vendors.sellOnMarket = False
-                    continue
-                
-                else:
-                    print("Found new value in footer to review.")
-
-            pass
-        except Exception as e:
-            pass
-
-        try:
-            vendors = soup.find_all('div', class_='db-shop__npc__space')
-            #self.item.buyFrom: List = []
-            if vendors != []:
-                #self.item.vendors: Value = Value()
-                #self.item.vendors.buy = self.buyPrice
-                #self.item.vendors.sell = self.sellPrice
-                #self.item.vendors.sellOnMarket = self.sellOnMarket
-                vendorRows = vendors[0].contents[0].contents[1].contents
-                vendorsList: List = []
-                for v in vendorRows:
-
-                    vendors: Vendors = Vendors()
-
-                    name = v.contents[0].contents[0].text
-                    loc = v.contents[1].text
-                    if name != '' and loc != '':
-                        vendors.name = name
-                        vendors.location = loc
-                        vendorsList.append(vendors)
-
-                self.item.vendors.buyFrom = vendorsList
-        except:
-            print(f"Item did not contain venders")
+        # vendors
+        self.__getVendors__()
 
         # Check if the item contains extra info
-        try:
-            htmlBase = soup.find_all('div', class_='db__l_main db__l_main__base')
-            self.item.relatedDuties = []            
-            if htmlBase != []:
-
-                for a in htmlBase:
-                    if a == '\n':
-                        continue
-
-                    if "Related Duties" in a.contents[1].text:
-                        dutiesList: List = []
-                        try:
-                            #duty: Dict = {'name': '', 'requiredLevel': 0, 'averageItemLevel': 0}
-                            duty = DropsFrom()
-                            duties = a.contents[3].contents[1].contents[3]
-                            duty.type = duties.contents[1].contents[1].contents[1].contents[1].text
-                            duty.expantion = duties.contents[1].contents[1].contents[1].contents[3].text
-                            duty.name = duties.contents[1].contents[1].contents[3].contents[0]
-                            duty.level = int(duties.contents[1].contents[3].text)
-                            duty.itemLevel = int(duties.contents[1].contents[5].string)
-                            dutiesList.append(duty)
-
-                            self.item.relatedDuties = dutiesList
-
-                        except Exception as e:
-                            print("Failed to parse 'Related Duties'", e)
-                pass
-
-        except Exception as e:
-            pass
+        self.instances()
 
         return self.item
 
@@ -587,3 +381,255 @@ class ParseItems():
         except Exception as e:
             print(e)
             pass
+
+    def patchVersion(self) -> None:
+        try:
+            pPatchVersion = self.soup.find_all('div', class_='db-content db-content__title')
+            tpatch = pPatchVersion[0].contents[0].text
+            tpatch = tpatch.replace('\n', '')
+            tpatch = tpatch.replace('Search ResultsVersion: Patch ', '')
+            self.item.patch = tpatch
+        except Exception as e:
+            print("Unable to find 'patch'. ", e)
+
+    def __getMarketValues__(self) -> None:
+        try:
+            footer = self.soup.find_all('div', class_='db-view__item_footer')
+            if footer != []:
+                self.buyPrice = 0
+                self.sellPrice = 0
+                self.sellOnMarket = True
+                self.unsellable = False
+                self.item.materia.advancedMelding = True
+                # Check for Advanced Melding
+                for i in footer[0].contents:
+                    if i.text == 'Advanced Melding Forbidden':
+
+                        self.item.materia.advancedMelding = False
+                        continue
+
+                    elif 'Available for Purchase:' in i.text:
+                        
+                        continue
+                    
+                    elif "Sale Price:" in i.text:
+                        textSplit = i.text.split("Sale Price: ")
+                        gilSplit = textSplit[1].split(' gil')
+                        self.item.vendors.buy = int(gilSplit[0].replace(',',''))
+                        continue
+
+                    elif 'Sells for' in i.text:
+                        split = i.text.split("Sells for")
+                        if len(split) >= 2:
+                            for g in split:
+                                if 'gil' in g:
+                                    gil = g
+                                    continue
+
+                        else:
+                            gil = split
+
+                        gil = gil.replace(" gil", '')
+                        gil = gil.replace(',', '')
+                        gil = gil.replace(' ', '')
+
+
+                        if self.item.vendors.sell != 0:
+                            #HQ Item
+                            #TODO HQ Sell Price
+                            pass
+                        else:
+                            self.item.vendors.sell = int(gil)
+                        continue
+
+                    elif i.text == 'Market Prohibited':
+                        self.item.vendors.sellOnMarket = False
+                        continue
+                    
+                    elif i.text == 'Unsellable':
+                        self.item.vendors.unsellable = True
+                        continue
+
+                    else:
+                        print(f"'Market Values' - Found new value '{i}' review.")
+        except Exception as e:
+            print("Unable to find 'Market Values' results. div = 'db-view__item_footer'", e)
+            pass
+    
+    def __getVendors__(self) -> None:
+        try:
+            vendors = self.soup.find_all('div', class_='db-shop__npc__space')
+            #self.item.buyFrom: List = []
+            if vendors != []:                
+                vendorRows = vendors[0].contents[0].contents[1].contents
+                vendorsList: List = []
+                for v in vendorRows:
+
+                    vendors: Vendors = Vendors()
+
+                    name = v.contents[0].contents[0].text
+                    loc = v.contents[1].text
+                    if name != '' and loc != '':
+                        vendors.name = name
+                        vendors.location = loc
+                        vendorsList.append(vendors)
+
+                self.item.vendors.buyFrom = vendorsList
+        except Exception as e:
+            print(f"Item did not contain venders", e)
+
+    def instances(self) -> None:
+        try:
+            htmlBase = self.soup.find_all('div', class_='db__l_main db__l_main__base')
+            self.item.relatedDuties = []            
+            if htmlBase != []:
+
+                for a in htmlBase:
+                    if a == '\n':
+                        continue
+
+                    if "Related Duties" in a.contents[1].text:
+                        dutiesList: List = []
+                        try:
+                            #duty: Dict = {'name': '', 'requiredLevel': 0, 'averageItemLevel': 0}
+                            duty = DropsFrom()
+                            duties = a.contents[3].contents[1].contents[3]
+                            duty.type = duties.contents[1].contents[1].contents[1].contents[1].text
+                            duty.expansion = duties.contents[1].contents[1].contents[1].contents[3].text
+                            duty.name = duties.contents[1].contents[1].contents[3].contents[0]
+                            duty.level = int(duties.contents[1].contents[3].text)
+                            duty.itemLevel = int(duties.contents[1].contents[5].string)
+                            dutiesList.append(duty)
+
+                            self.item.relatedDuties = dutiesList
+
+                        except Exception as e:
+                            print("Failed to parse 'Related Duties'", e)
+                pass
+
+        except Exception as e:
+            pass
+
+    def repair(self) -> None:
+        try:
+            repair = self.soup.find_all('ul', class_='db-view__item_repair')
+            self.item.repair = RepairInfo()
+            for r in repair[0].contents:
+                if r == '\n':
+                    continue
+
+                if r.contents[0].text == "Repair Level":
+                    _repair = r.contents[0].next_sibling.text.split(" Lv. ")                    
+                    self.item.repair.job = _repair[0]
+                    self.item.repair.level = int(_repair[1])
+                    continue
+                
+                if r.contents[0].string == "Materials":
+                    self.item.repair.material = r.contents[1].text
+                    continue
+
+                if r.contents[0].text == "Materia Melding":
+                    _melder = r.contents[1].text.split(' Lv. ')
+                    self.item.materia.melderJob = _melder[0]
+                    self.item.materia.melderLevel = int(_melder[1])
+                    pass
+
+            if "Lv." in repair[0].contents[1].contents[1].text:
+                repairBy = repair[0].contents[1].contents[1].contents[0].split(" Lv. ")
+                self.item.repair.job: str = repairBy[0]
+                self.item.repair.level: int = int(repairBy[1])
+                self.item.repair.material: str = repair[0].contents[1].next_sibling.contents[1].contents[0]
+        except Exception as e:
+            print(f"Unable to find expected HTML for repair values")
+
+    def materia(self) -> None:
+        try:
+            #materia_ = soup.find_all('div', class_='db-popup__inner')
+            materia_ = self.soup.find_all("ul", {'class': 'db-view__materia_socket'})
+            self.item.materia = Materia()
+            self.item.materia.slots = 0
+            self.item.materia.melderJob = ''
+            self.item.materia.melderLevel = 0
+            if materia_ != []:
+                self.__parseMateriaValues__(materia_)
+            else:
+                self.item.materia.slots = 0
+                self.item.materia.melderJob = None
+                print(f"{self.item.name} seems to not accept materia.")
+        except:
+            print(f'Unable to find expected HTML for materia')
+
+    def iLevel(self) -> None:
+        try:
+            htmlJobLevel = self.soup.find_all('div', {'class': 'db-view__item_equipment__level'})
+            if "Lv." in htmlJobLevel[0].text:
+                level = htmlJobLevel[0].text.replace("Lv. ", '')
+                self.item.level = int(level)
+            else:
+                self.item.level = 0
+        except Exception as e:
+            print("Failed to find what level is required for the item.", e)
+
+    def jobs(self) -> None:
+        try:
+            htmlJobs = self.soup.find_all('div', {'class': "db-view__item_equipment__class"})
+            jobsSplit = htmlJobs[0].contents[0].split(' ')
+            self.item.jobs = []
+            for j in jobsSplit:
+                self.item.jobs.append(j)
+        except Exception as e:
+            print(e)
+
+    def requiredItems(self) -> None:
+        try:
+            bonusAttr = self.soup.find_all('div', class_='sys_nq_element')
+
+            # Bonus Stats
+            self.__getBonusAttr__(bonusAttr)
+
+            self.item.requiredItems = []
+            if "Required Items" in bonusAttr[2].contents[0].text:
+                requiredItemsList: List = []
+
+                for ri in bonusAttr[2].contents:
+                    if ri.text == "Required Items":
+                        continue
+
+                    if ri.contents[0].attrs['class'][0] == 'db-shop__item':
+                        requiredItemsList.append(self.getRequiredItems(ri))
+                    
+                self.item.requiredItems = requiredItemsList
+        except:
+            print("Unable to find 'div class='sys_nq_element'.  Could be expected result based on the item.")
+            #raise UnableToFindValue("Unable to find 'div class='sys_nq_element'")
+
+    def itemPicture(self) -> None:
+        try:
+            pictureUrl = self.soup.find_all('div', class_='db-view__item__icon latest_patch__major__detail__item')
+            try:
+                for p in pictureUrl[0].contents:
+                    if p == '\n':
+                        continue
+
+                    if p.attrs['class'][0] == 'latest_patch__major__icon':
+                        continue
+
+                    if p.attrs['class'][0] == "staining":
+                        continue
+
+                    elif p.attrs['class'][0] == 'db-view__item__icon__cover':
+                        continue
+
+                    elif p.attrs['width'] == '152':
+                        continue
+
+                    elif p.attrs['width'] == '128':
+                        self.item.pictureUrl = p.attrs['src']
+                        self.item.pictureWidth = int(p.attrs['width'])
+                        self.item.pictureHeight = int(p.attrs['height'])
+                    else:
+                        print("new values found in pictureUrl")
+            except Exception as e:
+                print("Error parsing pictureUrl", e)
+        except Exception as e:
+            raise UnableToFindValue("msg: Unable to find a 'div' with class 'db-view__item__icon latest_patch__major__detail__item'")
