@@ -5,47 +5,60 @@ from XivDbReader.scrape import ParseList, ParseItems
 from typing import List
 import os
 import csv
+import uuid
 
 class ExportCsv():
-    def __init__(self, fileName: str):
-        self.fileName: str = f"{fileName}.csv"
-
-        self.weaponHeader: List[str] = [
-            'key','url','pictureUrl','name'
-            ,'rarity','untradeable','unique','slot'
-            ,'itemLevel','jobs','level','companyCrest'
-            ,'armorie','glamourChest','dyeable','extractable'
-            ,'projectable','desynth' ]
-        self.statsHeader: List[str] =[
-            'key','str','vit','dex'
-            ,'intelligence','mnd','det','skl'
-            ,'spl','crt','dhr','ten','pie']
-        self.repairHeader: List[str] = ['key','job','level','material']
-        self.materiaHeader: List[str] = ['key','slots','melderLevel','advancedMelding']
+    def __init__(self, recordType: str, recordJob: str, replaceFiles: bool = True):
+        self.recordType: str = recordType
+        self.recordJob: str = recordJob
+        self.__updateFileName__()
+        #self.fileName: str = f"{recordType}_{recordJob}.csv"
+        self.replaceFiles: bool = replaceFiles
         pass
 
-    def __writeHeaders__(self, fileName: str, ):
-        if os.path.isfile(f'{fileName}.csv') == False:
-            with open('weapons.csv', 'w', newline='') as csvfile:
-                try:
-                    writecvs = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                    if 'weapon' in fileName:
-                        writecvs.writerow(self.weaponHeader)
-                    if 'stats' in fileName:
-                        writecvs.writerow(self.statsHeader)
-                    if 'repair' in fileName:
-                        writecvs.writerow(self.repairHeader)
-                    if 'materia' in fileName:
-                        writecvs.writerow(self.materiaHeader)
-                except Exception as e:
-                    print(f"ERROR - {e}") 
+    def write(self, objectList: List) -> None:
+        # Check if file already exists
+        recordType = self.recordType
+        if self.replaceFiles == True:
+            self.__removeExistingFile__()
+            pass
 
-    def __removeExistingFile__(self, fileName: str) -> None:
-        if os.path.isfile(f'{fileName}.csv') == True:
+        for i in objectList:
+            o = i
+            t: str = str(type(o))
+            if 'weapon' in t.lower():
+                w: Weapon = i
+                self.__writeWeapon__(w, recordType)
+                self.__writeWeapon__(w.stats, f'{recordType}_stats')
+                self.__writeWeapon__(w.materia, f'{recordType}_materia')
+                self.__writeWeapon__(w.repair, f'{recordType}_repair')
+
+    def __writeWeapon__(self, w: Weapon, recordType) -> None:
+        self.recordType = recordType
+        self.__updateFileName__()
+        if os.path.exists(self.fileName) == False:
+            self.__writeLine__(w.getCsvHeader())
+        self.__writeLine__(w.getCsvRow())
+
+
+    def __updateFileName__(self) -> None:
+        self.fileName = f"{self.recordType}_{self.recordJob}.csv"
+
+    def __writeLine__(self, line) -> None:
+        with open(self.fileName, 'a', newline='') as csvfile:
             try:
-                os.remove(f"{fileName}.csv")
+                writecvs = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                writecvs.writerow(line)
             except Exception as e:
                 print(f"ERROR - {e}")
+
+    def __removeExistingFile__(self) -> None:
+        try:
+            exists = os.path.exists(self.fileName)
+            if exists == True:
+                os.remove(f"{self.fileName}")
+        except Exception as e:
+            print(f"ERROR - {e}")
     
 
 class Reader():
@@ -69,7 +82,8 @@ class Reader():
                 loopKeeper = True
                 break
             else:
-                weapons.append(res)
+                for i in res:
+                    weapons.append(i)
                 page = page + 1
                 if weapons.__len__() == self.recordLimit:
                     break

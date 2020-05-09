@@ -150,6 +150,13 @@ class ParseItems():
         self.item.glamourChest = glamourChest
         self.item.armorie = armorie
 
+        # Find what patch we are reviewing data for
+        pPatchVersion = soup.find_all('div', class_='db-content db-content__title')
+        tpatch = pPatchVersion[0].contents[0].text
+        tpatch = tpatch.replace('\n', '')
+        tpatch = tpatch.replace('Search ResultsVersion: Patch ', '')
+        self.item.patch = tpatch
+
         itemLevel: str = soup.find_all('div', class_='db-view__item_level')[0].text
         self.item.itemLevel: int = int(itemLevel.replace('Item Level ', ''))
 
