@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="XivDbReader", # Replace with your own username
-    version="0.0.2",
+    version="0.0.3",
     author="James Tombleson",
     author_email="jtombleson38@gmail.com",
     description="Web scraping package to read the Final Fantasy XIV DB.",
