@@ -495,7 +495,7 @@ class ParseItems():
                             duty = DropsFrom()
                             duties = a.contents[3].contents[1].contents[3]
                             duty.type = duties.contents[1].contents[1].contents[1].contents[1].text
-                            duty.expantion = duties.contents[1].contents[1].contents[1].contents[3].text
+                            duty.expansion = duties.contents[1].contents[1].contents[1].contents[3].text
                             duty.name = duties.contents[1].contents[1].contents[3].contents[0]
                             duty.level = int(duties.contents[1].contents[3].text)
                             duty.itemLevel = int(duties.contents[1].contents[5].string)

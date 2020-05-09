@@ -196,10 +196,17 @@ class ExchangeFor():
 class DropsFrom():
     def __init__(self):
         self.type: str = ''
-        self.expantion: str = ''
+        self.expansion: str = ''
         self.name: str = ''
         self.level: int = 0
         self.itemLevel: int = 0
+        
+    def getCsvHeader(self) -> List[str]:
+        return ['key', 'type', 'expansion', 'name', 'level', 'itemLevel']
+    
+    def getCsvRow(self) -> List[str]:
+        key = uuid4()
+        return [key, self.type, self.expansion, self.name, self.level, self.itemLevel]
 
 class Value():
     def __init__(self):

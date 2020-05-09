@@ -9,7 +9,7 @@ from XivDbReader import Reader, ExportCsv
 
 
 whmReader: Reader = Reader(job='whm')
-whmArms: List[Weapon] = whmReader.getArms(recordLimit=10)
+whmArms: List[Weapon] = whmReader.getArms(recordLimit=1)
 
 ec = ExportCsv(recordType='weapon', recordJob='whm')
 ec.write(whmArms)
