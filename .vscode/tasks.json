@@ -6,12 +6,12 @@
         {
             "label": "pip build",
             "type": "shell",
-            "command": "python3 setup.py bdist_wheel"
+            "command": "python3 setup.py sdist bdist_wheel"
         }
         ,{
             "label": "pip upload",
             "type": "shell",
-            "command": "python -m twine upload dist/*"
+            "command": "python3 -m twine upload dist/*"
         }
     ]
 

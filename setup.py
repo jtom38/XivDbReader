@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="XivDbReader", # Replace with your own username
-    version="0.0.3",
+    version="0.0.4",
     author="James Tombleson",
     author_email="jtombleson38@gmail.com",
     description="Web scraping package to read the Final Fantasy XIV DB.",
@@ -18,5 +18,9 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires=[
+        'requests',
+        'beautifulsoup4'
+    ]
     python_requires='>=3.8',
 )
